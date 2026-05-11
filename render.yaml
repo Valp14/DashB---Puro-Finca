@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: purofinca-portal
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:server --bind 0.0.0.0:$PORT
+    envVars:
+      - key: APP_DEBUG
+        value: false
+      - key: SESSION_COOKIE_SECURE
+        value: false
+      - key: SESSION_COOKIE_SAMESITE
+        value: Lax
+      - key: SESSION_LIFETIME
+        value: 14400
+      - key: LOGIN_MAX_ATTEMPTS
+        value: 5
+      - key: LOGIN_WINDOW_SECONDS
+        value: 900
+      - key: ALLOW_DEFAULT_PORTAL_PASSWORDS
+        value: false

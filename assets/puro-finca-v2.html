@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Puro Finca S.A.S — Agroexportación con propósito desde el Caribe colombiano</title>
+<meta name="description" content="Puro Finca S.A.S: empresa colombiana líder en agroexportación. Producción, transformación y comercialización de batata (boniato) para mercados internacionales." />
+
+<!-- Tipografías editoriales: Fraunces (display serif con personalidad) + Plus Jakarta Sans (sans humanista) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" /> -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* =========================================================
+   RESET + VARIABLES
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ========================
+     VERDES (marca)
+     ======================== */
+  --green-primary: #1bb470;
+  --green-deep:    #0f5c2e;
+  --green-mid:     #42bb4c;
+  --green-light:   #73c423;
+  --green-soft:    #a6dfab;
+
+  /* ========================
+     NARANJAS (marca)
+     ======================== */
+  --orange-primary: #ff7a01;
+  --orange-mid:     #ff9806;
+  --orange-light:   #ffb506;
+  --orange-soft:    #ffd07e;
+  --orange:         var(--orange-primary);
+
+  /* ========================
+     NEUTROS
+     ======================== */
+  --cream:       #ebf1db;   /* del logo */
+  --cream-soft:  #f4f7ea;   /* ajuste suave */
+  --ink:         #1a1d1a;
+  --ink-soft:    #4a4d48;
+  --line:        #dfe6d3;
+
+  --max: 1320px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::selection {
+  background: var(--orange-primary);
+  color: white;
+}
+
+
+
+html { scroll-behavior: smooth; }
+
+body {
+  /* font-family: 'Plus Jakarta Sans', system-ui, sans-serif; */
+  font-family: 'Manrope', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+/* Tipografía display */
+.display {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+.display em { font-style: italic; font-variation-settings: "opsz" 144, "SOFT" 100; color: var(--orange-primary); }
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.container { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.25rem 0;
+  background: rgba(247, 243, 236, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s var(--ease);
+}
+.nav.scrolled { border-bottom-color: var(--line); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; }
+
+.logo {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-family: 'DM Serif Display', Georgia, serif; font-weight: 600; font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+.logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+.logo-mark {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--green-mid) 0%, var(--green-soft) 100%);
+  position: relative; flex-shrink: 0;
+  box-shadow: inset 0 0 0 2px var(--orange-primary);
+}
+.logo-mark::after {
+  content: ""; position: absolute; inset: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 70%, transparent 35%, rgba(255,255,255,0.15) 36%, transparent 37%),
+              linear-gradient(180deg, transparent 50%, rgba(15,58,38,0.4) 50%);
+}
+.logo span:last-child { color: var(--orange-primary); font-style: italic; }
+
+.nav-links { display: flex; gap: 2.2rem; align-items: center; }
+.nav-links a { font-size: 0.92rem; font-weight: 500; color: var(--ink-soft); transition: color .2s; }
+.nav-links a:hover { color: var(--orange-primary); }
+
+.nav-cta {
+  padding: 0.65rem 1.3rem; background: var(--ink); color: var(--cream);
+  border-radius: 999px; font-size: 0.88rem; font-weight: 500;
+  transition: transform .25s var(--ease), background .25s;
+}
+.nav-cta:hover { background: var(--orange-primary); transform: translateY(-1px); }
+
+/* Acciones del nav (portal + cta) */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* Botón Portal Interno — estilo "secundario" con indicador de estado */
+.nav-portal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--green-deep);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  transition: all .25s var(--ease);
+  background: transparent;
+}
+.nav-portal:hover {
+  border-color: var(--green-mid);
+  background: rgba(45, 106, 79, 0.06);
+  color: var(--green-mid);
+}
+.nav-portal:hover .portal-dot { background: var(--green-mid); }
+
+.portal-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green-mid);
+  position: relative;
+  flex-shrink: 0;
+}
+/* Pulso suave para indicar "sistema activo" */
+.portal-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--green-mid);
+  animation: pulse 2s ease-out infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.menu-toggle { display: none; }
+
+@media (max-width: 960px) {
+  .nav-portal { display: inline-flex; }
+}
+@media (max-width: 860px) {
+  .nav-links { display: none; }
+  .menu-toggle { display: block; font-size: 1.5rem; color: var(--ink); }
+  .nav-actions { gap: 0.5rem; }
+  .nav-cta { padding: 0.55rem 1rem; font-size: 0.82rem; }
+}
+
+/* =========================================================
+   HERO — split editorial layout
+   ========================================================= */
+.hero {
+  padding: 9rem 0 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Canvas de rayos animados — capa encima del fondo crema */
+#heroCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* Asegurar que el contenido esté sobre el canvas */
+.hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 4rem;
+  align-items: end;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  margin-bottom: 1.8rem;
+  color: var(--green-mid);
+}
+.hero-eyebrow::before {
+  content: ""; width: 32px; height: 1px; background: var(--green-mid);
+}
+
+.hero h1 {
+  font-size: clamp(2.8rem, 6.5vw, 5.4rem);
+  margin-bottom: 1.8rem;
+  color: var(--ink);
+}
+.hero h1 em { color: var(--orange-primary); }
+.hero h1 .accent {
+  display: inline-block;
+  position: relative;
+  color: var(--ink);
+}
+.hero h1 .accent::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0.08em;
+  height: 0.18em;
+  background: var(--orange-primary);
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: underline 1.2s var(--ease) 0.8s forwards;
+}
+@keyframes underline { to { transform: scaleX(1); } }
+
+.hero p.lead {
+  font-size: 1.15rem;
+  color: var(--ink-soft);
+  max-width: 32em;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 1rem 1.8rem;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all .3s var(--ease);
+  position: relative;
+}
+.btn-primary {
+  background: var(--green-mid);
+}
+.btn-primary:hover {
+  background: var(--orange-primary); transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(201, 89, 17, 0.5);
+}
+.btn-ghost {
+  color: var(--ink); border: 1px solid var(--ink);
+}
+.btn-ghost:hover { background: var(--ink); color: var(--cream); }
+.btn .arrow { transition: transform .3s var(--ease); }
+.btn:hover .arrow { transform: translateX(4px); }
+
+/* Hero imagen — composición orgánica con stats flotando */
+.hero-visual { 
+  position: relative; 
+  height: clamp(550px, 70vh, 780px); /* más grande */
+}
+
+.hero-img-main {
+  position: absolute;
+  inset: 0;
+  border-radius: 220px 220px 24px 24px;
+  background-image: url('/assets/imagenfondoweb.png');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 40px 80px -25px rgba(15, 58, 38, 0.45); /* más presencia */
+  transform: scale(1.05); /* leve zoom */
+}
+/* Vignette suave verde en la imagen */
+.hero-img-main::after {
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, transparent 50%, rgba(15, 58, 38, 0.25) 100%);
+}
+
+.hero-stat {
+  position: absolute;
+  background: var(--cream);
+  padding: 1.2rem 1.4rem;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px -15px rgba(0,0,0,0.18);
+  z-index: 2;
+}
+.hero-stat-1 { top: 8%; left: -8%; }
+.hero-stat-2 { bottom: 10%; right: -6%; }
+
+.hero-stat .num {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 2.4rem; font-weight: 500; color: var(--orange-primary);
+  letter-spacing: -0.02em; line-height: 1;
+}
+.hero-stat .lbl { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.3rem; max-width: 14ch; }
+
+/* Decorativo: eliminado — el canvas lo reemplaza */
+
+@media (max-width: 960px) {
+  .hero { padding: 7rem 0 3rem; }
+  .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .hero-visual { height: 60vw; min-height: 380px; }
+  .hero-stat-1 { left: 4%; }
+  .hero-stat-2 { right: 4%; }
+}
+
+/* =========================================================
+   MARQUEE — barra de credenciales
+   ========================================================= */
+.marquee {
+  background: var(--ink);
+  color: var(--cream);
+  overflow: hidden;
+  padding: 1.4rem 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.marquee-track {
+  display: flex;
+  gap: 4rem;
+  animation: scroll 35s linear infinite;
+  white-space: nowrap;
+  width: max-content;
+}
+.marquee-item {
+  display: inline-flex; align-items: center; gap: 1rem;
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: 300;
+}
+.marquee-item .dot { color: var(--orange); font-style: normal; }
+@keyframes scroll {
+  to { transform: translateX(-50%); }
+}
+
+/* =========================================================
+   SECCIÓN: NOSOTROS
+   ========================================================= */
+section { padding: 7rem 0; position: relative; }
+section.tight { padding: 5rem 0; }
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  margin-bottom: 1.8rem;
+
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: var(--green-mid);
+}
+
+/* Línea más gruesa y más larga */
+.section-label::before {
+  content: "";
+  width: 48px;     /* antes 24px */
+  height: 2px;     /* antes 1px */
+  background: var(--green-mid);
+}
+
+.section-title {
+  font-size: clamp(2rem, 4.2vw, 3.4rem);
+  max-width: 18ch;
+  margin-bottom: 1.5rem;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.about-text p {
+  color: var(--ink-soft); margin-bottom: 1.2rem; font-size: 1.05rem;
+}
+.about-text p strong { color: var(--ink); font-weight: 600; }
+
+.about-stats {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 0; margin-top: 2.5rem;
+  border-top: 1px solid var(--line);
+}
+.about-stat {
+  padding: 1.5rem 1rem 0 0;
+  border-right: 1px solid var(--line);
+}
+.about-stat:last-child { border-right: none; padding-left: 1.5rem; padding-right: 0; }
+.about-stat .num {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 2.6rem; line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--green-deep);
+}
+.about-stat .num em { color: var(--orange-primary); font-style: italic; }
+.about-stat .desc { font-size: 0.88rem; color: var(--ink-soft); margin-top: 0.5rem; }
+
+.about-visual {
+  position: relative;
+  aspect-ratio: 4/5;
+}
+.about-visual .img-main {
+  position: absolute; inset: 0;
+  background-image: url('/assets/agricultor-campo.jpg');
+  background-size: cover; background-position: center;
+  border-radius: 12px;
+  z-index: 1;
+}
+.about-visual .img-secondary {
+  position: absolute;
+  bottom: -40px; right: -40px;
+  width: 55%; aspect-ratio: 1;
+  background-image: url('/assets/boniatos-fresco.jpg');
+  background-size: cover; background-position: center;
+  border-radius: 12px;
+  z-index: 2;
+  border: 8px solid var(--cream);
+}
+.about-visual .badge {
+  position: absolute;
+  top: -20px; left: -20px;
+  background: var(--orange);
+  color: var(--cream);
+  padding: 1rem 1.3rem;
+  border-radius: 50%;
+  width: 110px; height: 110px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  z-index: 3;
+  font-family: 'DM Serif Display', Georgia, serif;
+  transform: rotate(-8deg);
+}
+.about-visual .badge .yr { font-size: 1.6rem; line-height: 1; font-weight: 500; }
+.about-visual .badge .lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; font-family: 'Manrope', system-ui, sans-serif; }
+
+@media (max-width: 860px) {
+  .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .about-visual { max-width: 480px; margin: 0 auto; }
+  .about-visual .img-secondary { right: 0; bottom: -30px; }
+}
+
+/* =========================================================
+   PROPUESTA DE VALOR — pillars
+   ========================================================= */
+.pillars-section {
+  background: var(--green-deep);
+  color: var(--cream);
+}
+.pillars-section .section-label { color: var(--green-soft); }
+.pillars-section .section-title em { color: var(--green-soft); }
+
+.pillars-header {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end;
+  margin-bottom: 4rem;
+}
+.pillars-header p {
+  color: rgba(247, 243, 236, 0.7);
+  font-size: 1.1rem;
+  max-width: 36em;
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid rgba(247, 243, 236, 0.15);
+}
+.pillar {
+  padding: 2.5rem 1.8rem 2.5rem 0;
+  border-right: 1px solid rgba(247, 243, 236, 0.15);
+  position: relative;
+  transition: background .3s var(--ease);
+}
+.pillar:not(:first-child) { padding-left: 1.8rem; }
+.pillar:last-child { border-right: none; }
+.pillar:hover { background: rgba(255, 255, 255, 0.03); }
+
+.pillar-num {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-style: italic;
+  color: var(--orange);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.pillar-icon {
+  width: 44px; height: 44px;
+  margin-bottom: 1.5rem;
+  color: var(--green-soft);
+}
+.pillar h3 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.01em;
+}
+.pillar p {
+  font-size: 0.95rem;
+  color: rgba(247, 243, 236, 0.65);
+  line-height: 1.55;
+}
+
+@media (max-width: 960px) {
+  .pillars-header { grid-template-columns: 1fr; gap: 1.5rem; }
+  .pillars-grid { grid-template-columns: 1fr 1fr; }
+  .pillar { padding: 2rem 1.5rem 2rem 0 !important; border-right: 1px solid rgba(247, 243, 236, 0.15); border-bottom: 1px solid rgba(247, 243, 236, 0.15); }
+  .pillar:nth-child(2n) { border-right: none; padding-right: 0 !important; }
+  .pillar:nth-child(odd):not(:first-child) { padding-left: 0 !important; }
+  .pillar:nth-child(2):not(:nth-child(1)) { padding-left: 1.5rem !important; }
+}
+@media (max-width: 560px) {
+  .pillars-grid { grid-template-columns: 1fr; }
+  .pillar { padding: 2rem 0 !important; border-right: none !important; }
+}
+
+/* =========================================================
+   OBJETIVO — sección con cita gigante
+   ========================================================= */
+.objective-section { padding: 8rem 0; }
+.objective-grid { display: grid; grid-template-columns: 0.4fr 1fr; gap: 4rem; align-items: start; }
+.objective-side .mono { color: var(--orange-primary); }
+.objective-quote {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.objective-quote em {
+  font-style: italic;
+  background: linear-gradient(105deg, var(--orange-primary) 0%, var(--orange-primary) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.objective-quote .small {
+  display: block; margin-top: 2rem;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: 1rem; line-height: 1.6; color: var(--ink-soft);
+  max-width: 50ch;
+}
+
+@media (max-width: 760px) {
+  .objective-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* =========================================================
+   SERVICIOS — accordion / lista numerada
+   ========================================================= */
+.services-section { background: var(--cream-soft); }
+.services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+
+.services-list { border-top: 1px solid var(--line); }
+
+.service-item {
+  border-bottom: 1px solid var(--line);
+  padding: 1.8rem 0;
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  gap: 1.5rem;
+  align-items: start;
+  cursor: pointer;
+  transition: padding .3s var(--ease);
+}
+.service-item:hover { padding-left: 0.5rem; }
+.service-num {
+  font-family: 'DM Serif Display', Georgia, serif; font-style: italic;
+  color: var(--orange-primary); font-size: 1.1rem;
+}
+.service-content h3 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.5rem; font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.3rem;
+}
+.service-content p {
+  font-size: 0.95rem; color: var(--ink-soft);
+  max-height: 0; overflow: hidden;
+  transition: max-height .4s var(--ease), margin-top .3s var(--ease);
+}
+.service-item.active .service-content p {
+  max-height: 200px;
+  margin-top: 0.8rem;
+}
+.service-toggle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all .3s var(--ease);
+  font-size: 1.2rem; color: var(--ink-soft);
+}
+.service-item.active .service-toggle {
+  background: var(--orange-primary); color: var(--cream); border-color: var(--orange-primary);
+  transform: rotate(45deg);
+}
+
+.services-side {
+  position: sticky; top: 100px;
+  background: var(--green-deep);
+  color: var(--cream);
+  padding: 3rem 2.5rem;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.services-side::before {
+  content: "";
+  position: absolute;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(149, 213, 178, 0.3), transparent);
+  top: -80px; right: -80px;
+  border-radius: 50%;
+}
+.services-side h4 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.8rem; font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+.services-side p {
+  color: rgba(247, 243, 236, 0.7);
+  font-size: 0.95rem; margin-bottom: 2rem;
+  position: relative;
+}
+.services-side .certs {
+  display: flex; flex-wrap: wrap; gap: 0.6rem;
+  position: relative;
+}
+.services-side .cert {
+  padding: 0.5rem 0.9rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 960px) {
+  .services-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .services-side { position: static; }
+}
+
+/* =========================================================
+   MISION + VISION — split asimétrico
+   ========================================================= */
+.mv-section { padding: 7rem 0; }
+.mv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch; /* Asegura que ambas tarjetas tengan la misma altura */
+}
+.mv-card {
+  padding: 3rem 2.5rem;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+
+  height: 100%; 
+
+  min-height: 420px;
+
+  transition: transform .4s var(--ease);
+}
+.mv-card:hover { transform: translateY(-6px); }
+
+.mv-card.mision {
+  background: var(--green-deep);
+  color: var(--cream);
+}
+.mv-card.vision {
+  background: var(--orange-primary);
+}
+.mv-card .label {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.85;
+}
+.mv-card h3 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: auto;
+}
+.mv-card .footer-bit {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  opacity: 0.85;
+  border-top: 1px solid currentColor;
+  padding-top: 1rem;
+  display: flex; justify-content: space-between;
+}
+.mv-card .deco {
+  position: absolute;
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 18rem; line-height: 1;
+  font-style: italic;
+  bottom: -4rem; right: -1rem;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .mv-grid { grid-template-columns: 1fr; }
+  .mv-card.vision { margin-top: 0; }
+}
+
+/* =========================================================
+   PROYECTO LÍDER — BATATA
+   ========================================================= */
+.project-section {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 8rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.project-section .section-label { color: var(--orange); }
+
+.project-header {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end;
+  margin-bottom: 5rem;
+}
+.project-header h2 {
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.project-header h2 em {
+  color: var(--orange);
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+}
+.project-header p {
+  color: rgba(247, 243, 236, 0.7);
+  font-size: 1.05rem;
+  max-width: 36em;
+}
+
+.project-formats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+.format-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 2rem 1.8rem;
+  transition: all .3s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.format-card:hover {
+  background: rgba(232, 116, 44, 0.08);
+  border-color: var(--orange);
+  transform: translateY(-4px);
+}
+.format-card .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--orange);
+  letter-spacing: 0.1em;
+  margin-bottom: 1.2rem;
+}
+.format-card h4 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin-bottom: 0.6rem;
+}
+.format-card p {
+  font-size: 0.92rem;
+  color: rgba(247, 243, 236, 0.65);
+  line-height: 1.5;
+}
+
+.project-target {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 3rem;
+  align-items: center;
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(232, 116, 44, 0.1), rgba(232, 116, 44, 0.02));
+  border: 1px solid rgba(232, 116, 44, 0.25);
+  border-radius: 16px;
+}
+.project-target .big {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(4rem, 9vw, 7rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--orange);
+}
+.project-target .desc {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.6rem;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.3;
+  max-width: 22ch;
+}
+.project-target .timeline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--orange);
+  text-align: right;
+  letter-spacing: 0.08em;
+}
+.project-target .timeline strong {
+  display: block;
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--cream);
+  margin-top: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 860px) {
+  .project-header { grid-template-columns: 1fr; gap: 2rem; }
+  .project-formats { grid-template-columns: 1fr; }
+  .project-target { grid-template-columns: 1fr; gap: 1.5rem; text-align: left; padding: 2rem; }
+  .project-target .timeline { text-align: left; }
+}
+
+/* =========================================================
+   IMPACTO
+   ========================================================= */
+.impact-section {
+  padding: 8rem 0;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--cream-soft) 100%);
+}
+.impact-grid {
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 5rem; align-items: center;
+}
+.impact-text h2 { font-size: clamp(2rem, 4vw, 3.2rem); margin-bottom: 1.5rem; }
+.impact-text p {
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+  max-width: 38em;
+}
+
+.impact-numbers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.impact-num {
+  padding: 2.5rem 2rem;
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--cream);
+  transition: all .3s var(--ease);
+}
+.impact-num:hover {
+  background: var(--ink); color: var(--cream);
+  transform: scale(1.02); z-index: 2;
+}
+.impact-num:nth-child(1) { border-radius: 16px 0 0 0; }
+.impact-num:nth-child(2) { border-radius: 0 16px 0 0; border-left: none; }
+.impact-num:nth-child(3) { border-radius: 0 0 0 16px; border-top: none; }
+.impact-num:nth-child(4) { border-radius: 0 0 16px 0; border-top: none; border-left: none; }
+
+.impact-num .figure {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--green-deep);
+  transition: color .3s;
+  margin-bottom: 0.6rem;
+}
+.impact-num:hover .figure { color: var(--orange); }
+.impact-num .figure em { font-style: italic; color: var(--orange-primary); }
+.impact-num h4 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+.impact-num p {
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+  transition: color .3s;
+}
+.impact-num:hover p { color: rgba(247, 243, 236, 0.7); }
+
+@media (max-width: 860px) {
+  .impact-grid { grid-template-columns: 1fr; gap: 3rem; }
+}
+
+/* =========================================================
+   CTA FINAL
+   ========================================================= */
+.cta-section {
+  padding: 9rem 0;
+  position: relative;
+  overflow: hidden;
+  background: var(--green-deep);
+  color: var(--cream);
+}
+.cta-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(232, 116, 44, 0.15), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(149, 213, 178, 0.12), transparent 50%);
+}
+
+.cta-inner {
+  position: relative;
+  max-width: 880px;
+  margin: 0 auto;
+  text-align: center;
+}
+.cta-inner h2 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin-bottom: 1.5rem;
+}
+.cta-inner h2 em {
+  font-style: italic;
+  color: var(--orange);
+}
+.cta-inner p {
+  font-size: 1.15rem;
+  color: rgba(247, 243, 236, 0.75);
+  margin-bottom: 2.5rem;
+  max-width: 50ch;
+  margin-left: auto; margin-right: auto;
+}
+.cta-buttons {
+  display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.btn-cta-primary {
+  background: var(--orange); color: var(--cream);
+  padding: 1.1rem 2.2rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+.btn-cta-primary:hover {
+  background: var(--cream); color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(0,0,0,0.3);
+}
+.btn-cta-ghost {
+  border: 1px solid rgba(247, 243, 236, 0.3);
+  color: var(--cream);
+  padding: 1.1rem 2.2rem;
+  border-radius: 999px;
+}
+.btn-cta-ghost:hover {
+  border-color: var(--cream); background: rgba(247, 243, 236, 0.05);
+}
+
+.cta-channels {
+  display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap;
+  font-size: 0.92rem;
+  color: rgba(247, 243, 236, 0.6);
+}
+.cta-channels a { color: var(--cream); border-bottom: 1px solid var(--orange); padding-bottom: 2px; }
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.footer {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 4rem 0 2rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(247, 243, 236, 0.1);
+}
+.footer-brand .logo { color: var(--cream); margin-bottom: 1rem; }
+.footer-brand p {
+  color: rgba(247, 243, 236, 0.55);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 32ch;
+}
+.footer-col h5 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 1.2rem;
+}
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 0.7rem; }
+.footer-col a {
+  color: rgba(247, 243, 236, 0.7);
+  font-size: 0.92rem;
+  transition: color .2s;
+}
+.footer-col a:hover { color: var(--orange); }
+
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+  font-size: 0.82rem;
+  color: rgba(247, 243, 236, 0.5);
+}
+.footer-socials { display: flex; gap: 1rem; }
+.footer-socials a {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(247, 243, 236, 0.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .25s;
+}
+.footer-socials a:hover { background: var(--orange); border-color: var(--orange); }
+
+@media (max-width: 760px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+}
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* =========================================================
+   ANIMATIONS — reveal on scroll
+   ========================================================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s var(--ease), transform 1s var(--ease);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+  
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href="#" class="logo" aria-label="Puro Finca inicio">
+      <img src="/assets/logo.png" alt="Puro Finca logo" class="logo-img">
+    </a>
+    <nav class="nav-links" aria-label="Navegación principal">
+      <a href="#nosotros">Nosotros</a>
+      <a href="#propuesta">Propuesta</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#proyecto">Batata</a>
+      <a href="#impacto">Impacto</a>
+    </nav>
+    <div class="nav-actions">
+      <!--
+        ============================================================
+        BOTÓN PORTAL INTERNO
+        ============================================================
+        Reemplazá el href="#" por la URL real de tu dashboard Python.
+        Ejemplos:
+          - Streamlit:  https://dashboard.purofinca.co
+          - Flask/Dash: https://app.purofinca.co
+          - Local dev:  http://localhost:8501
+
+        El login lo maneja el dashboard, no este HTML.
+        target="_blank" abre el portal en una pestaña nueva (recomendado
+        para no perder el contexto de la landing). Si preferís que abra
+        en la misma pestaña, eliminá target y rel.
+        ============================================================
+      -->
+      <a href="/login" class="nav-portal" id="portalBtn">
+        <span class="portal-dot" aria-hidden="true"></span>
+        Portal interno
+      </a>
+      <a href="#contacto" class="nav-cta">Conversemos →</a>
+    </div>
+    <button class="menu-toggle" aria-label="Abrir menú">☰</button>
+  </div>
+</header>
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<section class="hero">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="container hero-grid">
+    <div class="hero-text">
+      <div class="section-label">Agroexportación · Caribe Colombiano</div>
+      <h1 class="display">
+        Del campo<br>
+        <em>colombiano</em><br>
+        al <span class="accent">mundo</span>.
+      </h1>
+      <p class="lead">
+        Construimos cadenas de valor agrícolas con rigor científico y visión exportadora.
+        Convertimos la batata colombiana en un producto premium para los mercados más exigentes
+        de Europa, Norteamérica y Asia.
+      </p>
+      <div class="hero-ctas">
+        <a href="#contacto" class="btn btn-primary">
+          Aliados estratégicos <span class="arrow">→</span>
+        </a>
+        <a href="#proyecto" class="btn btn-ghost">
+          Conoce el proyecto
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-img-main"></div>
+      <div class="hero-stat hero-stat-1">
+        <div class="num">+5</div>
+        <div class="lbl">Años articulando ciencia y agro</div>
+      </div>
+      <div class="hero-stat hero-stat-2">
+        <div class="num">1.000<span style="font-size:1.2rem">ha</span></div>
+        <div class="lbl">Meta de producción a 2 años</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     MARQUEE — barra de credenciales
+     ========================================================= -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">Producción <span class="dot">●</span></span>
+    <span class="marquee-item">Transformación <span class="dot">●</span></span>
+    <span class="marquee-item">Comercialización <span class="dot">●</span></span>
+    <span class="marquee-item">Innovación <span class="dot">●</span></span>
+    <span class="marquee-item">Exportación <span class="dot">●</span></span>
+    <span class="marquee-item">Producción <span class="dot">●</span></span>
+    <span class="marquee-item">Transformación <span class="dot">●</span></span>
+    <span class="marquee-item">Comercialización <span class="dot">●</span></span>
+    <span class="marquee-item">Innovación <span class="dot">●</span></span>
+    <span class="marquee-item">Exportación <span class="dot">●</span></span>
+  </div>
+</div>
+
+<!-- =========================================================
+     NOSOTROS
+     ========================================================= -->
+<section id="nosotros" class="container">
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <div class="section-label">Quiénes somos</div>
+      <h2 class="display section-title">
+        Un equipo que entiende <em>la tierra</em> y conoce los mercados.
+      </h2>
+      <p>
+        En <strong>Puro Finca S.A.S</strong> diseñamos y operamos proyectos agrícolas de alto impacto.
+        Producimos, transformamos y comercializamos, con estándares internacionales y con los pies
+        firmemente puestos en el Caribe colombiano.
+      </p>
+      <p>
+        Trabajamos articulados con el ecosistema de <strong>ciencia, tecnología e innovación</strong> del
+        sector agropecuario, traduciendo investigación aplicada en hectáreas reales, contratos firmados
+        y productores con mejor calidad de vida.
+      </p>
+      <div class="about-stats">
+        <div class="about-stat">
+          <div class="num">+5 <em>años</em></div>
+          <div class="desc">Experiencia operando en el sector agroexportador</div>
+        </div>
+        <div class="about-stat">
+          <div class="num">Alianzas <em>estratégicas</em></div>
+          <div class="desc">A nivel nacional e internacional</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-visual reveal">
+      <div class="img-main" role="img" aria-label="Cultivo de batata en finca"></div>
+      <div class="img-secondary" role="img" aria-label="Manos sosteniendo cosecha"></div>
+      <div class="badge"><span class="yr">+5</span><span class="lbl">Años</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     PROPUESTA DE VALOR
+     ========================================================= -->
+<section id="propuesta" class="pillars-section">
+  <div class="container">
+    <div class="pillars-header reveal">
+      <div>
+        <div class="section-label">Propuesta de valor</div>
+        <h2 class="display section-title">
+          No vendemos commodities.<br>
+          Construimos <em>cadenas de valor</em>.
+        </h2>
+      </div>
+      <p>
+        Cada hectárea que sembramos está conectada con un mercado, una norma técnica y una
+        comunidad. Esa es la diferencia entre exportar producto y construir industria.
+      </p>
+    </div>
+
+    <div class="pillars-grid">
+      <article class="pillar reveal">
+        <div class="pillar-num">i.</div>
+        <h3>Visión exportadora</h3>
+        <p>Producimos pensando en mercados internacionales desde el día uno: variedades, calidades y trazabilidad alineadas con la demanda global.</p>
+      </article>
+
+      <article class="pillar reveal">
+        <div class="pillar-num">ii.</div>
+        <h3>Ciencia aplicada</h3>
+        <p>Cada decisión productiva se apoya en datos, agronomía moderna y vínculos con centros de investigación del país.</p>
+      </article>
+
+      <article class="pillar reveal">
+        <div class="pillar-num">iii.</div>
+        <h3>Cadena de valor</h3>
+        <p>Integramos cultivo, transformación y comercialización para capturar valor en cada eslabón —no solo en el producto fresco.</p>
+      </article>
+
+      <article class="pillar reveal">
+        <div class="pillar-num">iv.</div>
+        <h3>Pequeños productores</h3>
+        <p>Construimos asociatividad real con campesinos del Caribe: asistencia técnica, acuerdos comerciales justos y acceso a mercados premium.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     OBJETIVO GENERAL
+     ========================================================= -->
+<section class="objective-section">
+  <div class="container objective-grid reveal">
+    <div class="objective-side">
+      <div class="mono">03 — Objetivo general</div>
+    </div>
+    <div>
+      <h2 class="objective-quote display">
+        Potenciar la <em>agroexportación</em> en Colombia transformando los sistemas
+        agroalimentarios con conocimiento, tecnología e innovación.
+        <span class="small">
+          Aprovechamos la experiencia internacional de nuestros equipos y la riqueza
+          agroecológica del Caribe colombiano para mejorar productividad, competitividad
+          y posicionar al país como un actor relevante en los mercados globales de tubérculos premium.
+        </span>
+      </h2>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SERVICIOS / CAPACIDADES
+     ========================================================= -->
+<section id="servicios" class="services-section">
+  <div class="container">
+    <div style="margin-bottom: 4rem;" class="reveal">
+      <div class="section-label">Capacidades</div>
+      <h2 class="display section-title">
+        Lo que ofrecemos a <em>aliados</em><br>e inversionistas.
+      </h2>
+    </div>
+
+    <div class="services-grid">
+      <div class="services-list reveal">
+
+        <div class="service-item active">
+          <div class="service-num">01</div>
+          <div class="service-content">
+            <h3>Asesoría agroempresarial</h3>
+            <p>Diagnóstico, planificación y guía estratégica para transformar la productividad y competitividad de operaciones agrícolas: del análisis de aptitud territorial al diseño de unidades productivas viables.</p>
+          </div>
+          <div class="service-toggle">+</div>
+        </div>
+
+        <div class="service-item">
+          <div class="service-num">02</div>
+          <div class="service-content">
+            <h3>Fortalecimiento productivo</h3>
+            <p>Implementación de cadenas de valor agregado intensivas en innovación: variedades certificadas, manejo agronómico moderno y procesos de transformación con valor exportable.</p>
+          </div>
+          <div class="service-toggle">+</div>
+        </div>
+
+        <div class="service-item">
+          <div class="service-num">03</div>
+          <div class="service-content">
+            <h3>Exportación y normativa</h3>
+            <p>Acompañamiento integral en el cumplimiento de requisitos sanitarios y de calidad: ICA, BPA, Global GAP, FDA y demás certificaciones requeridas por mercados de Europa, Norteamérica y Asia.</p>
+          </div>
+          <div class="service-toggle">+</div>
+        </div>
+
+        <div class="service-item">
+          <div class="service-num">04</div>
+          <div class="service-content">
+            <h3>Atracción de inversión</h3>
+            <p>Estructuración de proyectos para movilizar cofinanciación, matching grants e inversión privada —con foco especial en aliados europeos interesados en agro de alto valor.</p>
+          </div>
+          <div class="service-toggle">+</div>
+        </div>
+
+        <div class="service-item">
+          <div class="service-num">05</div>
+          <div class="service-content">
+            <h3>Acompañamiento a pequeños productores</h3>
+            <p>Asociatividad, organización agroempresarial, protección de signos distintivos y nuevas creaciones. Convertimos campesinos en empresarios con acceso real a mercados internacionales.</p>
+          </div>
+          <div class="service-toggle">+</div>
+        </div>
+
+      </div>
+
+      <aside class="services-side reveal">
+        <h4>Operamos bajo los estándares que exigen los mercados más rigurosos del mundo.</h4>
+        <p>Trabajamos día a día para alinear cada eslabón de nuestra cadena con las certificaciones que abren —y mantienen— las puertas de la exportación seria.</p>
+        <div class="certs">
+          <span class="cert">ICA</span>
+          <span class="cert">Global G.A.P</span>
+          <span class="cert">BPA</span>
+          <span class="cert">FDA</span>
+          <span class="cert">HACCP</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     MISION + VISION
+     ========================================================= -->
+<section class="mv-section">
+  <div class="container">
+    <div style="margin-bottom: 3.5rem;" class="reveal">
+      <div class="section-label">Hacia dónde vamos</div>
+      <h2 class="display section-title">Misión y visión.</h2>
+    </div>
+
+    <div class="mv-grid">
+      <article class="mv-card mision reveal">
+        <div class="label">Nuestra misión</div>
+        <h3>
+          Convertir a Colombia en un país agroexportador relevante: creando empleo,
+          transferiendo conocimiento y conectando la Región Caribe con los mercados
+          internacionales más exigentes.
+        </h3>
+        <div class="footer-bit">
+          <span>Hoy</span>
+          <span>2026</span>
+        </div>
+        <span class="deco">M</span>
+      </article>
+
+      <article class="mv-card vision reveal">
+        <div class="label">Nuestra visión</div>
+        <h3>
+          Liderar la agroexportación colombiana e impactar a más de 1.000 microempresarios,
+          posicionando al Caribe como la gran despensa exportadora del país.
+        </h3>
+        <div class="footer-bit">
+          <span>Horizonte</span>
+          <span>2030</span>
+        </div>
+        <span class="deco">V</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     PROYECTO LIDER — BATATA
+     ========================================================= -->
+<section id="proyecto" class="project-section">
+  <div class="container">
+    <div class="project-header reveal">
+      <div>
+        <div class="section-label">Proyecto líder</div>
+        <h2 class="display">La batata: <em>nuestro tubérculo bandera</em>.</h2>
+      </div>
+      <p>
+        El boniato (también conocido como camote o sweet potato) es uno de los productos
+        agrícolas con mayor crecimiento de demanda global. Tiene perfil nutricional premium,
+        múltiples formatos comerciales y mercados maduros que pagan por calidad. Apostamos por él.
+      </p>
+    </div>
+
+    <div class="project-formats">
+      <article class="format-card reveal">
+        <div class="num">01 / Fresco</div>
+        <h4>Batata en fresco</h4>
+        <p>Producto de exportación con clasificación por calibre y calidad para grandes superficies, importadores y mercados especializados.</p>
+      </article>
+
+      <article class="format-card reveal">
+        <div class="num">02 / Transformado</div>
+        <h4>Harina de batata</h4>
+        <p>Ingrediente funcional libre de gluten, alto en fibra y con creciente demanda en panificación, snacks y nutrición especializada.</p>
+      </article>
+
+      <article class="format-card reveal">
+        <div class="num">03 / Congelado</div>
+        <h4>Batata congelada</h4>
+        <p>Producto de valor agregado para foodservice, retail y exportación, con cadena de frío y empaques alineados a estándares internacionales.</p>
+      </article>
+    </div>
+
+    <div class="project-target reveal">
+      <div class="big">1.000</div>
+      <div class="desc">Hectáreas en producción para mercado internacional</div>
+      <div class="timeline">
+        Horizonte<br>
+        <strong>24 meses</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     IMPACTO
+     ========================================================= -->
+<section id="impacto" class="impact-section">
+  <div class="container impact-grid">
+    <div class="impact-text reveal">
+      <div class="section-label">Impacto</div>
+      <h2 class="display">El campo se transforma cuando crecemos <em>juntos</em>.</h2>
+      <p>
+        Nuestro impacto no se mide solo en toneladas exportadas. Se mide en familias
+        campesinas que pasaron de la subsistencia al mercado internacional. En conocimiento
+        que antes no existía en el territorio. En una región que vuelve a ser despensa.
+      </p>
+      <p>
+        Trabajamos en la Región Caribe colombiana, donde tradición agrícola, vocación
+        territorial y posición geoestratégica convergen para hacer posible una nueva
+        generación de agronegocios.
+      </p>
+    </div>
+
+    <div class="impact-numbers reveal">
+      <div class="impact-num">
+        <div class="figure">+1<em>K</em></div>
+        <h4>Microempresarios</h4>
+        <p>Meta de productores impactados directamente con asistencia técnica, acuerdos comerciales y procesos de asociatividad.</p>
+      </div>
+      <div class="impact-num">
+        <div class="figure">7</div>
+        <h4>Departamentos</h4>
+        <p>Cobertura proyectada en la Región Caribe a través de aliados productivos y centros de acopio descentralizados.</p>
+      </div>
+      <div class="impact-num">
+        <div class="figure">3</div>
+        <h4>Formatos exportables</h4>
+        <p>Fresco, harina y congelado: una estrategia multi-producto que diversifica riesgo y maximiza valor.</p>
+      </div>
+      <div class="impact-num">
+        <div class="figure">100<em>%</em></div>
+        <h4>Trazabilidad</h4>
+        <p>Cada hectárea, cada lote, cada contenedor: monitoreados bajo los estándares que el mercado global ya exige.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     CTA FINAL
+     ========================================================= -->
+<section id="contacto" class="cta-section">
+  <div class="container cta-inner reveal">
+    <h2 class="display">
+      ¿Listos para construir <em>la próxima despensa</em><br>
+      exportadora del país?
+    </h2>
+    <p>
+      Si eres inversionista, importador, aliado comercial o aliado técnico, hablemos.
+      Tenemos hectáreas, equipo, mercado y rigor. Falta tu pieza.
+    </p>
+    <div class="cta-buttons">
+      <a href="mailto:contacto@purofinca.co" class="btn-cta-primary">Iniciar conversación →</a>
+      <a href="#nosotros" class="btn-cta-ghost">Descargar brochure</a>
+    </div>
+    <div class="cta-channels">
+      <span>Email · <a href="mailto:contacto@purofinca.co">contacto@purofinca.co</a></span>
+      <span>Tel · <a href="#">+57 (305) 000 0000</a></span>
+      <span>Sede · Región Caribe, Colombia</span>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <span class="logo-mark"></span>
+          <span>Puro</span><span style="color: var(--orange);">Finca</span>
+        </a>
+        <p>
+          Empresa colombiana de agroexportación, transformación y comercialización
+          de productos agrícolas premium. Caribe Colombiano.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Empresa</h5>
+        <ul>
+          <li><a href="#nosotros">Nosotros</a></li>
+          <li><a href="#propuesta">Propuesta</a></li>
+          <li><a href="#impacto">Impacto</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Operaciones</h5>
+        <ul>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#proyecto">Proyecto Batata</a></li>
+          <li><a href="#">Certificaciones</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Contacto</h5>
+        <ul>
+          <li><a href="mailto:contacto@purofinca.co">contacto@purofinca.co</a></li>
+          <li><a href="#">+57 (305) 000 0000</a></li>
+          <li><a href="#">Región Caribe, CO</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 Puro Finca S.A.S — Todos los derechos reservados.</div>
+      <div class="footer-socials">
+        <a href="#" aria-label="LinkedIn">in</a>
+        <a href="#" aria-label="Instagram">ig</a>
+        <a href="#" aria-label="X">𝕏</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// =========================================================
+// NAV scroll state
+// =========================================================
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// =========================================================
+// Reveal on scroll
+// =========================================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+// =========================================================
+// HERO — Rayos de luz suaves tipo luz de campo (canvas)
+// =========================================================
+(function () {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // Rayos más anchos, tenues, cálidos — simula luz solar filtrándose
+  const RAYS = 18;
+  const BASE_SPEED = 0.00010; // rotación muy lenta, casi imperceptible
+
+  const rays = Array.from({ length: RAYS }, (_, i) => ({
+    angle:      (i / RAYS) * Math.PI * 2,
+    width:      0.06 + Math.random() * 0.10,   // rayos más anchos y suaves
+    alpha:      0.12 + Math.random() * 0.18,   // muy tenues
+    phase:      Math.random() * Math.PI * 2,
+    pulseAmp:   0.04 + Math.random() * 0.08,   // respiración mínima
+    pulseSpeed: 0.00015 + Math.random() * 0.00020, // muy lenta
+  }));
+
+  let focalX, focalY;
+  let targetFX, targetFY;
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    // Punto focal: esquina superior derecha — como sol de campo
+    focalX = canvas.width  * 0.72;
+    focalY = canvas.height * 0.08;
+    targetFX = focalX;
+    targetFY = focalY;
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Parallax suavísimo con mouse — casi inapreciable
+  document.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    if (e.clientY < rect.bottom) {
+      const nx = (e.clientX - rect.left) / rect.width;   // 0–1
+      const ny = (e.clientY - rect.top)  / rect.height;
+      // Mueve el focal solo un 6% hacia el cursor — muy sutil
+      targetFX = canvas.width  * (0.72 + (nx - 0.5) * 0.06);
+      targetFY = canvas.height * (0.08 + (ny - 0.5) * 0.04);
+    }
+  });
+
+  let t = 0;
+
+  function draw() {
+    t++;
+
+    // Lerp ultra suave
+    focalX += (targetFX - focalX) * 0.012;
+    focalY += (targetFY - focalY) * 0.012;
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const diag = Math.sqrt(W * W + H * H) * 1.15;
+
+    // Fondo completamente transparente — la crema del body se ve abajo
+    ctx.clearRect(0, 0, W, H);
+
+    // Halo solar en el punto focal — warm golden-green, muy tenue
+    const halo = ctx.createRadialGradient(focalX, focalY, 0, focalX, focalY, H * 0.55);
+    halo.addColorStop(0,    'rgba(210, 240, 180, 0.38)');
+    halo.addColorStop(0.18, 'rgba(160, 220, 100, 0.20)');
+    halo.addColorStop(0.5,  'rgba( 80, 160,  60, 0.08)');
+    halo.addColorStop(1,    'rgba(  0,   0,   0, 0.00)');
+    ctx.fillStyle = halo;
+    ctx.fillRect(0, 0, W, H);
+
+    // Rotación global muy lenta
+    const globalRot = t * BASE_SPEED * Math.PI * 2;
+
+    rays.forEach((ray) => {
+      const angle = ray.angle + globalRot;
+      const pulse = ray.alpha + ray.pulseAmp * Math.sin(t * ray.pulseSpeed * Math.PI * 2 + ray.phase);
+      const alpha = Math.max(0, Math.min(0.38, pulse));
+
+      const endX  = focalX + Math.cos(angle) * diag;
+      const endY  = focalY + Math.sin(angle) * diag;
+      const leftX = focalX + Math.cos(angle - ray.width) * diag;
+      const leftY = focalY + Math.sin(angle - ray.width) * diag;
+      const rightX= focalX + Math.cos(angle + ray.width) * diag;
+      const rightY= focalY + Math.sin(angle + ray.width) * diag;
+
+      // Paleta cálida: verde-dorado-lima, muy soft
+      const grad = ctx.createLinearGradient(focalX, focalY, endX, endY);
+      grad.addColorStop(0,    `rgba(220, 250, 180, ${alpha * 0.90})`);
+      grad.addColorStop(0.12, `rgba(140, 210, 100, ${alpha * 0.65})`);
+      grad.addColorStop(0.40, `rgba( 80, 170,  60, ${alpha * 0.28})`);
+      grad.addColorStop(0.75, `rgba( 40, 100,  30, ${alpha * 0.08})`);
+      grad.addColorStop(1,    'rgba(0, 0, 0, 0)');
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'multiply'; // se mezcla con el fondo crema
+      ctx.beginPath();
+      ctx.moveTo(focalX, focalY);
+      ctx.lineTo(leftX, leftY);
+      ctx.lineTo(rightX, rightY);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // Destello focal — pequeño, cálido, apenas visible
+    const flare = ctx.createRadialGradient(focalX, focalY, 0, focalX, focalY, 55);
+    const fp = 0.28 + 0.10 * Math.sin(t * 0.00080 * Math.PI * 2);
+    flare.addColorStop(0,   `rgba(240, 255, 210, ${fp})`);
+    flare.addColorStop(0.4, `rgba(160, 230, 120, ${fp * 0.4})`);
+    flare.addColorStop(1,   'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = flare;
+    ctx.beginPath();
+    ctx.arc(focalX, focalY, 55, 0, Math.PI * 2);
+    ctx.fill();
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+document.querySelectorAll('.service-item').forEach((item) => {
+  item.addEventListener('click', () => {
+    const wasActive = item.classList.contains('active');
+    document.querySelectorAll('.service-item').forEach((i) => i.classList.remove('active'));
+    if (!wasActive) item.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
