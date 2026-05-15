@@ -126,3 +126,7 @@ def registrar_empaque_multi(params: dict[str, Any]):
 
 def registrar_despacho(params: dict[str, Any]):
     return rpc("registrar_despacho_app", params)
+
+
+def registrar_despacho_multi(params: dict[str, Any]):
+    return rpc("registrar_despacho_multi_app", params)

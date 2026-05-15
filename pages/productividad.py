@@ -14,7 +14,7 @@ from config.settings import PROCESOS
 from styles.theme import page_header, empty_state
 from pages._common import filter_panel
 from components.ui import (kpi_card, kpi_row, fmt_num, fmt_pct, detail_table)
-from components.charts import bar_plan_vs_real, barh_ranking, line_temporal
+from components.charts import bar_plan_vs_real, barh_ranking, daily_complete_series, line_temporal
 from components.sidebar import get_data_filtrada
 from utils.metrics import (
     kpis_corte, kpis_siembra, kpis_cosecha,
@@ -115,14 +115,17 @@ def render(archivo, store_data, filtros):
     # ---------- Tendencia cosecha ----------
     df_cos = data.get("Cosecha", pd.DataFrame())
     if not df_cos.empty and "Fecha" in df_cos.columns and "Produccion Kg" in df_cos.columns:
-        serie = df_cos.dropna(subset=["Fecha"]).copy()
-        serie["_FechaDia"] = pd.to_datetime(serie["Fecha"], errors="coerce").dt.date
-        serie = (serie.dropna(subset=["_FechaDia"])
-                     .groupby("_FechaDia", as_index=False)["Produccion Kg"].sum())
-        serie.columns = ["Fecha", "Produccion Kg"]
+        f = filtros or {}
+        serie = daily_complete_series(
+            df_cos,
+            date_col="Fecha",
+            value_cols="Produccion Kg",
+            start=f.get("fecha_inicio"),
+            end=f.get("fecha_fin"),
+        )
         fig = line_temporal(serie, x="Fecha", y="Produccion Kg",
                             titulo="Kg cosechados por día", y_label="Kg")
-        tend_chart = dcc.Graph(figure=fig, config={"displayModeBar": False})
+        tend_chart = dcc.Graph(figure=fig, config={"displayModeBar": False, "responsive": True})
     else:
         tend_chart = empty_state("Sin datos de cosecha para graficar tendencia.")
 

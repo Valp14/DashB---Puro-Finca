@@ -9,7 +9,7 @@ services:
       - key: APP_DEBUG
         value: false
       - key: SESSION_COOKIE_SECURE
-        value: false
+        value: true
       - key: SESSION_COOKIE_SAMESITE
         value: Lax
       - key: SESSION_LIFETIME

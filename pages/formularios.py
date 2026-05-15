@@ -22,7 +22,7 @@ from services.supabase_forms import (
     registrar_cosecha,
     registrar_lavado,
     registrar_empaque_multi,
-    registrar_despacho,
+    registrar_despacho_multi,
     mark_record_owner,
 )
 from services.supabase_data import load_operational_store
@@ -111,6 +111,27 @@ def _empaque_line(prefix: str, title: str, required: bool = False):
             _field("Kg sobrante", _num(f"{prefix}-sobrante", 0)),
             _field("Kg descarte", _num(f"{prefix}-descarte", 0)),
             _field("Causa de descarte", _dropdown(f"{prefix}-causa")),
+        ], className="form-grid form-grid-line"),
+    ], className="form-line-card")
+
+
+def _despacho_sale_line(prefix: str, title: str, required: bool = False):
+    badge = html.Span("Obligatoria" if required else "Opcional", className="form-line-badge" + (" required" if required else ""))
+    header = [html.Div(title, className="form-line-title"), badge]
+    if not required:
+        header.append(html.Button("Eliminar venta", id=f"btn-limpiar-{prefix}", n_clicks=0, className="btn-secondary btn-line-clear"))
+    return html.Div([
+        html.Div(header, className="form-line-header"),
+        html.Div([
+            _field("Tipo de venta", _input(f"{prefix}-tipo-venta", placeholder="Ej: contado, crédito, exportación")),
+            _field("Tratamiento", _input(f"{prefix}-tratamiento", placeholder="Ej: lavado, curado, seleccionado")),
+            _field("Clase", _dropdown(f"{prefix}-clase", CLASES)),
+            _field("Presentación", _dropdown(f"{prefix}-presentacion", PRESENTACIONES)),
+            _field("Unidades", _num(f"{prefix}-unidades", 0, "1")),
+            _field("Kg por unidad", _num(f"{prefix}-kg-unidad", 0)),
+            _field("Kg despachados", _num(f"{prefix}-kg", 0)),
+            _field("Precio unitario", _num(f"{prefix}-precio", 0)),
+            _field("Observaciones de venta", _textarea(f"{prefix}-obs", "Observaciones de esta venta")),
         ], className="form-grid form-grid-line"),
     ], className="form-line-card")
 
@@ -260,19 +281,22 @@ def form_despacho():
             _field("Placa vehículo", _input("despacho-placa")),
             _field("Conductor", _input("despacho-conductor")),
             _field("Remisión", _input("despacho-remision")),
-            _field("Factura", _input("despacho-factura")),
         ]),
-        _section("Producto despachado", [
-            _field("Clase", _dropdown("despacho-clase", CLASES)),
-            _field("Presentación", _dropdown("despacho-presentacion", PRESENTACIONES)),
-            _field("Unidades", _num("despacho-unidades", 0, "1")),
-            _field("Kg por unidad", _num("despacho-kg-unidad", 0)),
-            _field("Kg despachados", _num("despacho-kg", 0)),
+        _section("Ventas del despacho", [
+            html.Div("Registra una o varias ventas dentro del mismo despacho.", className="form-helper-text"),
+            _despacho_sale_line("despacho", "Venta 1", True),
+            dbc.Accordion([
+                dbc.AccordionItem(_despacho_sale_line("despacho2", "Venta 2"), title="Agregar otra venta"),
+                dbc.AccordionItem(_despacho_sale_line("despacho3", "Venta 3"), title="Agregar otra venta adicional"),
+                dbc.AccordionItem(_despacho_sale_line("despacho4", "Venta 4"), title="Agregar una cuarta venta"),
+            ], start_collapsed=True, className="form-accordion"),
+        ]),
+        _section("Equipo operativo", [
             _field("Número de trabajadores", _num("despacho-trabajadores", 0, "1")),
             _field("Horas trabajadas", _num("despacho-horas", 0, "0.25")),
         ]),
         html.Div(id="resumen-despacho", className="form-summary"),
-        _section("Observaciones", [_field("Observaciones", _textarea("despacho-obs"))]),
+        _section("Observaciones", [_field("Observaciones generales", _textarea("despacho-obs-general"))]),
         html.Div([_button("btn-guardar-despacho", "Registrar despacho y descontar inventario"), _msg("msg-despacho")], className="form-actions"),
     ])
 
@@ -414,12 +438,29 @@ def resumen_empaque(usados, kg, sobrante, descarte, kg2, sobrante2, descarte2, k
         html.Div([html.Span("Diferencia"), html.B(f"{diff:,.2f} kg", style={"color": "#2E7D4F" if abs(diff)<0.01 else "#A33A3A"})]),
     ])
 
-@callback(Output("resumen-despacho", "children"), Input("despacho-kg", "value"), Input("despacho-unidades", "value"), Input("despacho-kg-unidad", "value"))
-def resumen_despacho(kg, unidades, kg_unidad):
-    estimado = _f(unidades) * _f(kg_unidad)
+@callback(
+    Output("resumen-despacho", "children"),
+    Input("despacho-kg", "value"), Input("despacho-unidades", "value"), Input("despacho-kg-unidad", "value"), Input("despacho-precio", "value"),
+    Input("despacho2-kg", "value"), Input("despacho2-unidades", "value"), Input("despacho2-kg-unidad", "value"), Input("despacho2-precio", "value"),
+    Input("despacho3-kg", "value"), Input("despacho3-unidades", "value"), Input("despacho3-kg-unidad", "value"), Input("despacho3-precio", "value"),
+    Input("despacho4-kg", "value"), Input("despacho4-unidades", "value"), Input("despacho4-kg-unidad", "value"), Input("despacho4-precio", "value"),
+)
+def resumen_despacho(kg, unidades, kg_unidad, precio, kg2, unidades2, kg_unidad2, precio2, kg3, unidades3, kg_unidad3, precio3, kg4, unidades4, kg_unidad4, precio4):
+    lineas = [
+        (_f(kg), _f(unidades), _f(kg_unidad), _f(precio)),
+        (_f(kg2), _f(unidades2), _f(kg_unidad2), _f(precio2)),
+        (_f(kg3), _f(unidades3), _f(kg_unidad3), _f(precio3)),
+        (_f(kg4), _f(unidades4), _f(kg_unidad4), _f(precio4)),
+    ]
+    total_kg = sum(line[0] for line in lineas)
+    estimado = sum(line[1] * line[2] for line in lineas)
+    valor = sum(line[0] * line[3] for line in lineas if line[3] > 0)
+    activas = sum(1 for line in lineas if line[0] > 0 or line[1] > 0 or line[2] > 0)
     return html.Div([
-        _summary_line("Kg despachados", f"{_f(kg):,.2f} kg"),
+        _summary_line("Ventas activas", str(activas)),
+        _summary_line("Kg despachados", f"{total_kg:,.2f} kg"),
         _summary_line("Kg estimados por unidades", f"{estimado:,.2f} kg"),
+        _summary_line("Valor estimado", f"{valor:,.2f}" if valor > 0 else "-"),
     ])
 
 
@@ -567,8 +608,6 @@ def submit_cosecha(n, fecha, finca, proyecto, lote, surcos, trabajadores, horas,
     if negative: return _nonnegative_error(negative)
     if _f(total) <= 0 or abs(_f(total) - clasificado) >= 0.01:
         return _err("La producción total debe ser mayor a cero y coincidir con la clasificación."), no_update
-    if _f(descarte) > 0 and not causa:
-        return _err("Debes seleccionar causa de descarte."), no_update
     try:
         record_id = registrar_cosecha({"p_fecha": fecha, "p_finca_id": finca, "p_proyecto_id": proyecto, "p_lote_id": lote, "p_surcos_cosechados": _f(surcos), "p_numero_trabajadores": int(_f(trabajadores)), "p_horas_trabajadas": _f(horas), "p_uso_maquinaria": maq == "si", "p_produccion_total_kg": _f(total), "p_kg_primera": _f(primera), "p_kg_segunda": _f(segunda), "p_kg_tercera": _f(tercera), "p_kg_semilla": _f(semilla), "p_kg_descarte": _f(descarte), "p_causa_descarte_id": causa, "p_observaciones": obs})
         _mark_owner("form_cosecha", record_id)
@@ -603,8 +642,6 @@ def submit_lavado(n, fecha, finca, proyecto, lote, usados, lavados, primera, seg
     if negative: return _nonnegative_error(negative)
     if _f(lavados) <= 0 or abs(_f(lavados)-clasificado) >= 0.01 or abs(_f(usados)-_f(lavados)) >= 0.01:
         return _err("Kg usados, kg lavados y suma reclasificada deben coincidir."), no_update
-    if _f(descarte) > 0 and not causa:
-        return _err("Debes seleccionar causa de descarte."), no_update
     try:
         record_id = registrar_lavado({"p_fecha": fecha, "p_finca_id": finca, "p_proyecto_id": proyecto, "p_lote_origen_id": lote, "p_kg_usados": _f(usados), "p_kg_lavados": _f(lavados), "p_kg_primera_lavada": _f(primera), "p_kg_segunda": _f(segunda), "p_kg_tercera": _f(tercera), "p_kg_semilla": _f(semilla), "p_kg_descarte": _f(descarte), "p_numero_trabajadores": int(_f(trabajadores)), "p_horas_proceso": _f(horas), "p_causa_descarte_id": causa, "p_observaciones": obs})
         _mark_owner("form_lavado_clasificacion", record_id)
@@ -667,8 +704,6 @@ def submit_empaque(n, fecha, finca, proyecto, lote, inv_value, usados,
             return _err(f"En Empaque {i}, unidades y kg por unidad deben ser mayores a cero."), no_update
         if not _approx_equal(_f(un) * _f(kgu), kge, tolerance=0.05):
             return _err(f"En Empaque {i}, unidades por kg por unidad debe coincidir con kg empacados."), no_update
-        if _f(des) > 0 and not cau:
-            return _err(f"En Empaque {i}, debes seleccionar causa de descarte."), no_update
         activas.append({
             "clase": cl,
             "presentacion": pr,
@@ -682,14 +717,6 @@ def submit_empaque(n, fecha, finca, proyecto, lote, inv_value, usados,
 
     if not activas:
         return _err("Registra al menos una línea de empaque con kg empacados."), no_update
-
-    causas_descarte = {
-        line["causa_descarte_id"]
-        for line in activas
-        if _f(line["kg_descarte"]) > 0 and line.get("causa_descarte_id")
-    }
-    if len(causas_descarte) > 1:
-        return _err("Para registrar varias líneas en una sola transacción, usa una sola causa de descarte."), no_update
 
     salida = sum(_f(line["kg_empacados"])+_f(line["kg_sobrante"])+_f(line["kg_descarte"]) for line in activas)
     if abs(_f(usados) - salida) >= 0.01:
@@ -706,8 +733,24 @@ def submit_empaque(n, fecha, finca, proyecto, lote, inv_value, usados,
             return _err("Falta actualizar Supabase: ejecuta sql_formularios_rpc.sql para habilitar el registro transaccional de empaque."), no_update
         return _err(exc), no_update
 
-@callback(Output("msg-despacho", "children"), Output("store-data", "data", allow_duplicate=True), Input("btn-guardar-despacho", "n_clicks"), State("despacho-fecha", "date"), State("despacho-cliente", "value"), State("despacho-cliente-texto", "value"), State("despacho-destino", "value"), State("despacho-destino-texto", "value"), State("despacho-placa", "value"), State("despacho-conductor", "value"), State("despacho-remision", "value"), State("despacho-factura", "value"), State("despacho-clase", "value"), State("despacho-presentacion", "value"), State("despacho-unidades", "value"), State("despacho-kg-unidad", "value"), State("despacho-kg", "value"), State("despacho-trabajadores", "value"), State("despacho-horas", "value"), State("despacho-obs", "value"), prevent_initial_call=True)
-def submit_despacho(n, fecha, cliente, cliente_texto, destino, destino_texto, placa, conductor, remision, factura, clase, pres, unidades, kg_unidad, kg, trabajadores, horas, obs):
+@callback(
+    Output("msg-despacho", "children"),
+    Output("store-data", "data", allow_duplicate=True),
+    Input("btn-guardar-despacho", "n_clicks"),
+    State("despacho-fecha", "date"), State("despacho-cliente", "value"), State("despacho-cliente-texto", "value"), State("despacho-destino", "value"), State("despacho-destino-texto", "value"), State("despacho-placa", "value"), State("despacho-conductor", "value"), State("despacho-remision", "value"),
+    State("despacho-tipo-venta", "value"), State("despacho-tratamiento", "value"), State("despacho-clase", "value"), State("despacho-presentacion", "value"), State("despacho-unidades", "value"), State("despacho-kg-unidad", "value"), State("despacho-kg", "value"), State("despacho-precio", "value"), State("despacho-obs", "value"),
+    State("despacho2-tipo-venta", "value"), State("despacho2-tratamiento", "value"), State("despacho2-clase", "value"), State("despacho2-presentacion", "value"), State("despacho2-unidades", "value"), State("despacho2-kg-unidad", "value"), State("despacho2-kg", "value"), State("despacho2-precio", "value"), State("despacho2-obs", "value"),
+    State("despacho3-tipo-venta", "value"), State("despacho3-tratamiento", "value"), State("despacho3-clase", "value"), State("despacho3-presentacion", "value"), State("despacho3-unidades", "value"), State("despacho3-kg-unidad", "value"), State("despacho3-kg", "value"), State("despacho3-precio", "value"), State("despacho3-obs", "value"),
+    State("despacho4-tipo-venta", "value"), State("despacho4-tratamiento", "value"), State("despacho4-clase", "value"), State("despacho4-presentacion", "value"), State("despacho4-unidades", "value"), State("despacho4-kg-unidad", "value"), State("despacho4-kg", "value"), State("despacho4-precio", "value"), State("despacho4-obs", "value"),
+    State("despacho-trabajadores", "value"), State("despacho-horas", "value"), State("despacho-obs-general", "value"),
+    prevent_initial_call=True,
+)
+def submit_despacho(n, fecha, cliente, cliente_texto, destino, destino_texto, placa, conductor, remision,
+                    tipo, tratamiento, clase, pres, unidades, kg_unidad, kg, precio, obs_linea,
+                    tipo2, tratamiento2, clase2, pres2, unidades2, kg_unidad2, kg2, precio2, obs_linea2,
+                    tipo3, tratamiento3, clase3, pres3, unidades3, kg_unidad3, kg3, precio3, obs_linea3,
+                    tipo4, tratamiento4, clase4, pres4, unidades4, kg_unidad4, kg4, precio4, obs_linea4,
+                    trabajadores, horas, obs):
     if not n: return no_update, no_update
     if not _can_write_forms(): return _forbidden_write()
     missing = _missing_fields([("Fecha", fecha), ("Placa vehiculo", placa)])
@@ -718,21 +761,52 @@ def submit_despacho(n, fecha, cliente, cliente_texto, destino, destino_texto, pl
         return _err("Selecciona o escribe un cliente."), no_update
     if not (destino or destino_texto):
         return _err("Selecciona o escribe un destino."), no_update
-    if not clase or not pres or _f(kg) <= 0:
-        return _err("Clase, presentación y kg despachados son obligatorios."), no_update
     positive = []
-    if _f(unidades) <= 0: positive.append("Unidades")
-    if _f(kg_unidad) <= 0: positive.append("Kg por unidad")
     if _f(trabajadores) <= 0: positive.append("Trabajadores")
     if _f(horas) <= 0: positive.append("Horas")
     if positive: return _positive_error(positive)
-    if not _approx_equal(_f(unidades) * _f(kg_unidad), kg, tolerance=0.05):
-        return _err("Unidades por kg por unidad debe coincidir con kg despachados."), no_update
+
+    lineas_raw = [
+        (tipo, tratamiento, clase, pres, unidades, kg_unidad, kg, precio, obs_linea),
+        (tipo2, tratamiento2, clase2, pres2, unidades2, kg_unidad2, kg2, precio2, obs_linea2),
+        (tipo3, tratamiento3, clase3, pres3, unidades3, kg_unidad3, kg3, precio3, obs_linea3),
+        (tipo4, tratamiento4, clase4, pres4, unidades4, kg_unidad4, kg4, precio4, obs_linea4),
+    ]
+    ventas = []
+    for i, (tip, trat, cl, pr, un, kgu, kge, pre, obs_v) in enumerate(lineas_raw, start=1):
+        tiene_datos = bool(tip or trat or cl or pr or obs_v) or _f(un) > 0 or _f(kgu) > 0 or _f(kge) > 0 or _f(pre) > 0
+        if not tiene_datos:
+            continue
+        if not cl or not pr or _f(kge) <= 0:
+            return _err(f"En Venta {i}, clase, presentación y kg despachados son obligatorios."), no_update
+        if _f(un) <= 0 or _f(kgu) <= 0:
+            return _err(f"En Venta {i}, unidades y kg por unidad deben ser mayores a cero."), no_update
+        if _f(pre) < 0:
+            return _err(f"En Venta {i}, el precio no puede ser negativo."), no_update
+        if not _approx_equal(_f(un) * _f(kgu), kge, tolerance=0.05):
+            return _err(f"En Venta {i}, unidades por kg por unidad debe coincidir con kg despachados."), no_update
+        ventas.append({
+            "tipo_venta": tip,
+            "tratamiento": trat,
+            "clase": cl,
+            "presentacion": pr,
+            "unidades": int(_f(un)),
+            "kg_por_unidad": _f(kgu),
+            "kg_despachados": _f(kge),
+            "precio_unitario": _f(pre),
+            "observaciones": obs_v,
+        })
+
+    if not ventas:
+        return _err("Registra al menos una venta con kg despachados."), no_update
+
     try:
-        record_id = registrar_despacho({"p_fecha": fecha, "p_cliente_id": cliente, "p_cliente_texto": cliente_texto, "p_destino_id": destino, "p_destino_texto": destino_texto, "p_placa_vehiculo": placa, "p_conductor": conductor, "p_numero_remision": remision, "p_numero_factura": factura, "p_clase": clase, "p_presentacion": pres, "p_unidades": int(_f(unidades)), "p_kg_por_unidad": _f(kg_unidad), "p_kg_despachados": _f(kg), "p_numero_trabajadores": int(_f(trabajadores)), "p_horas_trabajadas": _f(horas), "p_observaciones": obs})
+        record_id = registrar_despacho_multi({"p_fecha": fecha, "p_cliente_id": cliente, "p_cliente_texto": cliente_texto, "p_destino_id": destino, "p_destino_texto": destino_texto, "p_placa_vehiculo": placa, "p_conductor": conductor, "p_numero_remision": remision, "p_numero_trabajadores": int(_f(trabajadores)), "p_horas_trabajadas": _f(horas), "p_ventas": ventas, "p_observaciones": obs})
         _mark_owner("form_despacho", record_id)
-        return _ok("Despacho registrado. El inventario fue descontado automáticamente."), _refresh()
+        return _ok(f"Despacho registrado con {len(ventas)} venta(s). El inventario fue descontado automáticamente."), _refresh()
     except Exception as exc:
+        if "registrar_despacho_multi_app" in str(exc):
+            return _err("Falta actualizar Supabase: ejecuta sql_formularios_rpc.sql para habilitar ventas múltiples en despacho."), no_update
         return _err(exc), no_update
 
 
@@ -788,9 +862,50 @@ def reset_empaque_form(msg):
     return (None, 0, None, None, 0, 0, 0, 0, 0, None, None, None, 0, 0, 0, 0, 0, None, None, None, 0, 0, 0, 0, 0, None, None, None, 0, 0, 0, 0, 0, None, 0, 0, "")
 
 @callback(
-    Output("despacho-cliente", "value"), Output("despacho-cliente-texto", "value"), Output("despacho-destino", "value"), Output("despacho-destino-texto", "value"), Output("despacho-placa", "value"), Output("despacho-conductor", "value"), Output("despacho-remision", "value"), Output("despacho-factura", "value"), Output("despacho-clase", "value"), Output("despacho-presentacion", "value"), Output("despacho-unidades", "value"), Output("despacho-kg-unidad", "value"), Output("despacho-kg", "value"), Output("despacho-trabajadores", "value"), Output("despacho-horas", "value"), Output("despacho-obs", "value"),
+    Output("despacho-cliente", "value"), Output("despacho-cliente-texto", "value"), Output("despacho-destino", "value"), Output("despacho-destino-texto", "value"), Output("despacho-placa", "value"), Output("despacho-conductor", "value"), Output("despacho-remision", "value"),
+    Output("despacho-tipo-venta", "value"), Output("despacho-tratamiento", "value"), Output("despacho-clase", "value"), Output("despacho-presentacion", "value"), Output("despacho-unidades", "value"), Output("despacho-kg-unidad", "value"), Output("despacho-kg", "value"), Output("despacho-precio", "value"), Output("despacho-obs", "value"),
+    Output("despacho2-tipo-venta", "value"), Output("despacho2-tratamiento", "value"), Output("despacho2-clase", "value"), Output("despacho2-presentacion", "value"), Output("despacho2-unidades", "value"), Output("despacho2-kg-unidad", "value"), Output("despacho2-kg", "value"), Output("despacho2-precio", "value"), Output("despacho2-obs", "value"),
+    Output("despacho3-tipo-venta", "value"), Output("despacho3-tratamiento", "value"), Output("despacho3-clase", "value"), Output("despacho3-presentacion", "value"), Output("despacho3-unidades", "value"), Output("despacho3-kg-unidad", "value"), Output("despacho3-kg", "value"), Output("despacho3-precio", "value"), Output("despacho3-obs", "value"),
+    Output("despacho4-tipo-venta", "value"), Output("despacho4-tratamiento", "value"), Output("despacho4-clase", "value"), Output("despacho4-presentacion", "value"), Output("despacho4-unidades", "value"), Output("despacho4-kg-unidad", "value"), Output("despacho4-kg", "value"), Output("despacho4-precio", "value"), Output("despacho4-obs", "value"),
+    Output("despacho-trabajadores", "value"), Output("despacho-horas", "value"), Output("despacho-obs-general", "value"),
     Input("msg-despacho", "children"), prevent_initial_call=True,
 )
 def reset_despacho_form(msg):
-    if not _is_success_msg(msg): return (no_update,)*16
-    return None, "", None, "", "", "", "", "", None, None, 0, 0, 0, 0, 0, ""
+    if not _is_success_msg(msg): return (no_update,)*46
+    empty_line = ("", "", None, None, 0, 0, 0, 0, "")
+    return (None, "", None, "", "", "", "", *empty_line, *empty_line, *empty_line, *empty_line, 0, 0, "")
+
+
+def _clear_despacho_line_outputs(prefix: str):
+    return (
+        Output(f"{prefix}-tipo-venta", "value", allow_duplicate=True),
+        Output(f"{prefix}-tratamiento", "value", allow_duplicate=True),
+        Output(f"{prefix}-clase", "value", allow_duplicate=True),
+        Output(f"{prefix}-presentacion", "value", allow_duplicate=True),
+        Output(f"{prefix}-unidades", "value", allow_duplicate=True),
+        Output(f"{prefix}-kg-unidad", "value", allow_duplicate=True),
+        Output(f"{prefix}-kg", "value", allow_duplicate=True),
+        Output(f"{prefix}-precio", "value", allow_duplicate=True),
+        Output(f"{prefix}-obs", "value", allow_duplicate=True),
+    )
+
+
+def _clear_despacho_line(n):
+    if not n:
+        return (no_update,) * 9
+    return "", "", None, None, 0, 0, 0, 0, ""
+
+
+@callback(*_clear_despacho_line_outputs("despacho2"), Input("btn-limpiar-despacho2", "n_clicks"), prevent_initial_call=True)
+def clear_despacho2(n):
+    return _clear_despacho_line(n)
+
+
+@callback(*_clear_despacho_line_outputs("despacho3"), Input("btn-limpiar-despacho3", "n_clicks"), prevent_initial_call=True)
+def clear_despacho3(n):
+    return _clear_despacho_line(n)
+
+
+@callback(*_clear_despacho_line_outputs("despacho4"), Input("btn-limpiar-despacho4", "n_clicks"), prevent_initial_call=True)
+def clear_despacho4(n):
+    return _clear_despacho_line(n)

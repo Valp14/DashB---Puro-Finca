@@ -168,6 +168,64 @@ def _records_to_legacy(proceso: str, rows: list[dict[str, Any]], catalogs: dict[
     return out
 
 
+def _attach_despacho_totals(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not rows:
+        return rows
+
+    ids = [str(r.get("id")) for r in rows if r.get("id")]
+    if not ids:
+        return rows
+
+    try:
+        client = get_supabase_client()
+        resp = (
+            client
+            .table("form_despacho_detalle")
+            .select("despacho_id,presentacion,unidades,kg_despachados")
+            .in_("despacho_id", ids)
+            .range(0, 9999)
+            .execute()
+        )
+        detalles = _safe_response_data(resp)
+    except Exception:
+        return rows
+
+    totals: dict[str, dict[str, float]] = {}
+    for d in detalles:
+        did = str(d.get("despacho_id") or "")
+        if not did:
+            continue
+        acc = totals.setdefault(did, {"kg": 0.0, "cajas": 0.0, "sacos": 0.0, "bolsas": 0.0})
+        try:
+            kg = float(d.get("kg_despachados") or 0)
+        except Exception:
+            kg = 0.0
+        try:
+            unidades = float(d.get("unidades") or 0)
+        except Exception:
+            unidades = 0.0
+        acc["kg"] += kg
+        presentacion = str(d.get("presentacion") or "").lower()
+        if presentacion == "caja":
+            acc["cajas"] += unidades
+        elif presentacion == "saco":
+            acc["sacos"] += unidades
+        elif presentacion == "bolsa":
+            acc["bolsas"] += unidades
+
+    enriched = []
+    for row in rows:
+        item = dict(row)
+        total = totals.get(str(row.get("id") or ""))
+        if total:
+            item["toneladas_o_kg"] = total["kg"]
+            item["cajas"] = total["cajas"]
+            item["sacos"] = total["sacos"]
+            item["bolsas"] = total["bolsas"]
+        enriched.append(item)
+    return enriched
+
+
 def load_operational_store() -> dict[str, list[dict[str, Any]]]:
     """Carga todas las tablas operativas de Supabase en formato dcc.Store."""
     if not supabase_is_configured():
@@ -178,6 +236,8 @@ def load_operational_store() -> dict[str, list[dict[str, Any]]]:
         store = _empty_store()
         for proceso, table in TABLE_MAP.items():
             rows = _fetch_table(table)
+            if proceso == "Cargue Vehiculo":
+                rows = _attach_despacho_totals(rows)
             store[proceso] = _records_to_legacy(proceso, rows, catalogs)
         return store
     except Exception as exc:
@@ -208,6 +268,8 @@ def load_user_operational_store(email: str | None) -> dict[str, list[dict[str, A
                 .execute()
             )
             rows = _safe_response_data(resp)
+            if proceso == "Cargue Vehiculo":
+                rows = _attach_despacho_totals(rows)
             store[proceso] = _records_to_legacy(proceso, rows, catalogs)
 
         return store

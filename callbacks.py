@@ -14,16 +14,112 @@ from __future__ import annotations
 
 import base64
 import io
-from datetime import date
 
 import pandas as pd
 from dash import Input, Output, State, callback, ctx, dcc, no_update, html
 
 from config.settings import PROCESOS
 from utils.data_loader import load_excel
-from utils.filters import opciones_unicas, rango_fechas
+from utils.filters import filtrar, opciones_unicas, rango_fechas
 from components.sidebar import store_to_dataframes
 from services.access_control import allowed_pages
+
+
+FILTER_FIELDS = {
+    "fincas": ("Finca", "filtro-finca"),
+    "lotes": ("Lote", "filtro-lote"),
+    "proyectos": ("Proyecto", "filtro-proyecto"),
+    "clientes": ("Cliente", "filtro-cliente"),
+    "destinos": ("Destino", "filtro-destino"),
+}
+
+
+def _as_filter_list(value) -> list[str]:
+    if value is None or value == "":
+        return []
+    if isinstance(value, (list, tuple, set)):
+        return [str(v) for v in value if v is not None and str(v) != ""]
+    return [str(value)]
+
+
+def _option_dicts(dfs: list[pd.DataFrame], col: str) -> list[dict[str, str]]:
+    return [
+        {"label": str(v), "value": str(v)}
+        for v in opciones_unicas(dfs, col)
+    ]
+
+
+def _apply_filter_set(
+    dfs: list[pd.DataFrame],
+    selections: dict,
+    exclude_key: str | None = None,
+) -> list[pd.DataFrame]:
+    filtered = []
+    for df in dfs:
+        filtered.append(
+            filtrar(
+                df,
+                fecha_inicio=None,
+                fecha_fin=None,
+                fincas=None if exclude_key == "fincas" else selections.get("fincas"),
+                lotes=None if exclude_key == "lotes" else selections.get("lotes"),
+                proyectos=None if exclude_key == "proyectos" else selections.get("proyectos"),
+                clientes=None if exclude_key == "clientes" else selections.get("clientes"),
+                destinos=None if exclude_key == "destinos" else selections.get("destinos"),
+                origenes=None,
+                strict_missing_dimensions=True,
+            )
+        )
+    return filtered
+
+
+def _options_for_key(
+    dfs: list[pd.DataFrame],
+    selections: dict,
+    key: str,
+) -> list[dict[str, str]]:
+    col, _ = FILTER_FIELDS[key]
+    return _option_dicts(_apply_filter_set(dfs, selections, exclude_key=key), col)
+
+
+def _sanitize_filter_values(
+    dfs: list[pd.DataFrame],
+    selections: dict,
+    protected_key: str | None = None,
+) -> dict:
+    sanitized = {key: _as_filter_list(selections.get(key)) for key in FILTER_FIELDS}
+
+    if protected_key in FILTER_FIELDS:
+        global_options = _option_dicts(dfs, FILTER_FIELDS[protected_key][0])
+        allowed = {opt["value"] for opt in global_options}
+        sanitized[protected_key] = [v for v in sanitized[protected_key] if v in allowed]
+
+    ordered_keys = list(FILTER_FIELDS)
+    if protected_key in ordered_keys:
+        ordered_keys.remove(protected_key)
+        ordered_keys.insert(0, protected_key)
+
+    for key in ordered_keys:
+        if key == protected_key:
+            continue
+        options = _options_for_key(dfs, sanitized, key)
+        allowed = {opt["value"] for opt in options}
+        sanitized[key] = [v for v in sanitized[key] if v in allowed]
+
+    if protected_key in FILTER_FIELDS:
+        options = _options_for_key(dfs, sanitized, protected_key)
+        allowed = {opt["value"] for opt in options}
+        sanitized[protected_key] = [v for v in sanitized[protected_key] if v in allowed]
+
+    return sanitized
+
+
+def _triggered_filter_key() -> str | None:
+    triggered_id = ctx.triggered_id
+    for key, (_, component_id) in FILTER_FIELDS.items():
+        if triggered_id == component_id:
+            return key
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -74,8 +170,7 @@ def on_upload(contents, filename):
 
 
 # ---------------------------------------------------------------------------
-# 2. Poblar opciones de los dropdowns cuando llega data
-#    (reemplaza opciones_unicas() en el sidebar de Streamlit)
+# 2. Poblar y reconciliar opciones de filtros
 # ---------------------------------------------------------------------------
 @callback(
     Output("filtro-finca",    "options"),
@@ -85,43 +180,81 @@ def on_upload(contents, filename):
     Output("filtro-destino",  "options"),
     Output("filtro-fechas",   "min_date_allowed"),
     Output("filtro-fechas",   "max_date_allowed"),
+    Output("filtro-finca",    "value"),
+    Output("filtro-lote",     "value"),
+    Output("filtro-proyecto", "value"),
+    Output("filtro-cliente",  "value"),
+    Output("filtro-destino",  "value"),
+    Output("filtro-fechas",   "start_date"),
+    Output("filtro-fechas",   "end_date"),
     Input("store-data", "data"),
     Input("url", "pathname"),
+    Input("filtro-finca",    "value"),
+    Input("filtro-lote",     "value"),
+    Input("filtro-proyecto", "value"),
+    Input("filtro-cliente",  "value"),
+    Input("filtro-destino",  "value"),
+    Input("filtro-fechas",   "start_date"),
+    Input("filtro-fechas",   "end_date"),
+    Input("btn-reset-filtros", "n_clicks"),
 )
-def poblar_opciones(store_data, pathname):
+def poblar_opciones(
+    store_data,
+    pathname,
+    fincas,
+    lotes,
+    proyectos,
+    clientes,
+    destinos,
+    fecha_inicio,
+    fecha_fin,
+    reset_clicks,
+):
     if not store_data:
-        return [], [], [], [], [], None, None
+        return [], [], [], [], [], None, None, [], [], [], [], [], None, None
 
     dfs = list(store_to_dataframes(store_data).values())
-
-    def _opts(col):
-        return [{"label": str(v), "value": str(v)}
-                for v in opciones_unicas(dfs, col)]
-
     fmin, fmax = rango_fechas(dfs)
-    return (_opts("Finca"), _opts("Lote"), _opts("Proyecto"),
-            _opts("Cliente"), _opts("Destino"),
-            fmin, fmax)
 
+    if ctx.triggered_id == "btn-reset-filtros":
+        selections = {key: [] for key in FILTER_FIELDS}
+        fecha_inicio, fecha_fin = None, None
+    else:
+        selections = {
+            "fincas": _as_filter_list(fincas),
+            "lotes": _as_filter_list(lotes),
+            "proyectos": _as_filter_list(proyectos),
+            "clientes": _as_filter_list(clientes),
+            "destinos": _as_filter_list(destinos),
+        }
+        selections = _sanitize_filter_values(
+            dfs,
+            selections,
+            protected_key=_triggered_filter_key(),
+        )
 
-# ---------------------------------------------------------------------------
-# 3. Limpiar filtros (reemplaza el callback on_click _reset_filtros)
-# ---------------------------------------------------------------------------
-@callback(
-    Output("filtro-finca",    "value", allow_duplicate=True),
-    Output("filtro-lote",     "value", allow_duplicate=True),
-    Output("filtro-proyecto", "value", allow_duplicate=True),
-    Output("filtro-cliente",  "value", allow_duplicate=True),
-    Output("filtro-destino",  "value", allow_duplicate=True),
-    Output("filtro-fechas",   "start_date", allow_duplicate=True),
-    Output("filtro-fechas",   "end_date",   allow_duplicate=True),
-    Input("btn-reset-filtros", "n_clicks"),
-    prevent_initial_call=True,
-)
-def reset_filtros(n):
-    if not n:
-        return no_update, no_update, no_update, no_update, no_update, no_update, no_update
-    return [], [], [], [], [], None, None
+    opts_finca = _options_for_key(dfs, selections, "fincas")
+    opts_lote = _options_for_key(dfs, selections, "lotes")
+    opts_proyecto = _options_for_key(dfs, selections, "proyectos")
+    opts_cliente = _options_for_key(dfs, selections, "clientes")
+    opts_destino = _options_for_key(dfs, selections, "destinos")
+
+    return (
+        opts_finca,
+        opts_lote,
+        opts_proyecto,
+        opts_cliente,
+        opts_destino,
+        fmin,
+        fmax,
+        selections["fincas"],
+        selections["lotes"],
+        selections["proyectos"],
+        selections["clientes"],
+        selections["destinos"],
+        fecha_inicio,
+        fecha_fin,
+    )
 
 
 # ---------------------------------------------------------------------------

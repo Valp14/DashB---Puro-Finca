@@ -8,7 +8,6 @@ gestión de personal.
 
 from __future__ import annotations
 
-import pandas as pd
 from dash import Input, Output, callback, dcc, html
 
 from styles.theme import page_header, empty_state
@@ -23,7 +22,7 @@ from components.ui import (
     dotacion_block,
     maquinaria_table,
 )
-from components.charts import line_temporal, barh_ranking
+from components.charts import daily_complete_series, line_temporal, barh_ranking
 from components.sidebar import get_data_filtrada
 from utils.metrics import (
     kpis_cosecha,
@@ -196,16 +195,13 @@ def render(archivo, store_data, filtros):
 
     # ---------- Tendencia ----------
     if not df.empty and "Fecha" in df.columns and "Produccion Kg" in df.columns:
-        serie = df.dropna(subset=["Fecha"]).copy()
-        serie["_FechaDia"] = pd.to_datetime(
-            serie["Fecha"],
-            errors="coerce",
-        ).dt.date
-
-        serie = (
-            serie.dropna(subset=["_FechaDia"])
-            .groupby("_FechaDia", as_index=False)[["Produccion Kg", "Descarte Kg"]]
-            .sum()
+        f = filtros or {}
+        serie = daily_complete_series(
+            df,
+            date_col="Fecha",
+            value_cols=["Produccion Kg", "Descarte Kg"],
+            start=f.get("fecha_inicio"),
+            end=f.get("fecha_fin"),
         )
 
         serie.columns = ["Fecha", "Producción Kg", "Descarte Kg"]
@@ -228,8 +224,8 @@ def render(archivo, store_data, filtros):
 
         tend = html.Div(
             [
-                dcc.Graph(figure=fig1, config={"displayModeBar": False}),
-                dcc.Graph(figure=fig2, config={"displayModeBar": False}),
+                dcc.Graph(figure=fig1, config={"displayModeBar": False, "responsive": True}),
+                dcc.Graph(figure=fig2, config={"displayModeBar": False, "responsive": True}),
             ],
             className="two-col",
         )

@@ -203,23 +203,28 @@ def _bar_figure(data: pd.DataFrame) -> go.Figure:
     fig = go.Figure()
     d = data.head(7).sort_values("kg") if not data.empty else data
     if not d.empty:
+        d = d.copy()
+        d["_label_full"] = d["label"].astype(str)
+        d["label"] = d["label"].astype(str).map(lambda x: x if len(x) <= 24 else x[:23] + "...")
         fig.add_trace(go.Bar(
-            x=d["label"],
-            y=d["kg"],
+            x=d["kg"],
+            y=d["label"],
+            orientation="h",
             marker=dict(color=COLOR_GREEN_2, line=dict(width=0)),
-            width=0.52,
-            hovertemplate="%{x}<br>%{y:,.2f} kg<extra></extra>",
+            width=0.56,
+            customdata=d["_label_full"],
+            hovertemplate="%{customdata}<br>%{x:,.2f} kg<extra></extra>",
         ))
     fig.update_layout(
         height=300,
-        margin=dict(l=32, r=14, t=8, b=46),
+        margin=dict(l=92, r=14, t=8, b=34),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
         font=dict(family='"Plus Jakarta Sans", sans-serif', color=COLOR_TEXT, size=12),
     )
-    fig.update_xaxes(showgrid=False, tickangle=0, tickfont=dict(size=11, color=COLOR_MUTED), linecolor=COLOR_BORDER)
-    fig.update_yaxes(title="kg", gridcolor="#EEF1EC", zeroline=False, tickfont=dict(size=11, color=COLOR_MUTED), linecolor=COLOR_BORDER)
+    fig.update_xaxes(title="kg", gridcolor="#EEF1EC", zeroline=False, tickfont=dict(size=10, color=COLOR_MUTED), linecolor=COLOR_BORDER, automargin=True)
+    fig.update_yaxes(showgrid=False, tickfont=dict(size=10, color=COLOR_MUTED), linecolor=COLOR_BORDER, automargin=True)
     return fig
 
 

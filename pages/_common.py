@@ -36,27 +36,48 @@ def filter_panel(title: str = "Filtros de la pestaña", compact: bool = False):
     Mantiene los mismos IDs globales para no tocar la lógica existente: al cambiar
     los controles se actualiza store-filtros y cada página recalcula sus datos.
     """
-    return html.Div([
-        html.Div([
-            html.Div(title, className="page-filter-title"),
-            html.Div("Ajusta el periodo y los segmentos visibles en esta sección.", className="page-filter-subtitle"),
-        ], className="page-filter-copy"),
+    def _dropdown(id_, placeholder):
+        return dcc.Dropdown(
+            id=id_,
+            multi=True,
+            placeholder=placeholder,
+            options=[],
+            value=[],
+            persistence=True,
+            persistence_type="session",
+        )
+
+    return html.Details([
+        html.Summary([
+            html.Div([
+                html.Div(title, className="page-filter-title"),
+                html.Div("Ajusta el periodo y los segmentos visibles en esta sección.", className="page-filter-subtitle"),
+            ], className="page-filter-copy"),
+            html.Div([
+                html.Span("Mostrar filtros", className="filter-toggle-label filter-toggle-show"),
+                html.Span("Ocultar filtros", className="filter-toggle-label filter-toggle-hide"),
+            ], className="filter-toggle-text"),
+        ], className="page-filter-summary"),
         html.Div([
             html.Div([
-                html.Div("Fecha", className="control-label"),
-                dcc.DatePickerRange(
-                    id="filtro-fechas",
-                    display_format="YYYY-MM-DD",
-                    start_date_placeholder_text="Desde",
-                    end_date_placeholder_text="Hasta",
-                    className="page-date-range",
-                ),
-            ], className="page-filter-field page-filter-field-date"),
-            html.Div([html.Div("Finca", className="control-label"), dcc.Dropdown(id="filtro-finca", multi=True, placeholder="Todas", options=[], value=[])], className="page-filter-field"),
-            html.Div([html.Div("Lote", className="control-label"), dcc.Dropdown(id="filtro-lote", multi=True, placeholder="Todos", options=[], value=[])], className="page-filter-field"),
-            html.Div([html.Div("Proyecto", className="control-label"), dcc.Dropdown(id="filtro-proyecto", multi=True, placeholder="Todos", options=[], value=[])], className="page-filter-field"),
-            html.Div([html.Div("Cliente", className="control-label"), dcc.Dropdown(id="filtro-cliente", multi=True, placeholder="Todos", options=[], value=[])], className="page-filter-field"),
-            html.Div([html.Div("Destino", className="control-label"), dcc.Dropdown(id="filtro-destino", multi=True, placeholder="Todos", options=[], value=[])], className="page-filter-field"),
-            html.Button([html.Span("⌁"), " Limpiar filtros"], id="btn-reset-filtros", className="btn-filter-reset", n_clicks=0),
-        ], className="page-filter-grid"),
+                html.Div([
+                    html.Div("Fecha", className="control-label"),
+                    dcc.DatePickerRange(
+                        id="filtro-fechas",
+                        display_format="YYYY-MM-DD",
+                        start_date_placeholder_text="Desde",
+                        end_date_placeholder_text="Hasta",
+                        className="page-date-range",
+                        persistence=True,
+                        persistence_type="session",
+                    ),
+                ], className="page-filter-field page-filter-field-date"),
+                html.Div([html.Div("Finca", className="control-label"), _dropdown("filtro-finca", "Todas")], className="page-filter-field"),
+                html.Div([html.Div("Lote", className="control-label"), _dropdown("filtro-lote", "Todos")], className="page-filter-field"),
+                html.Div([html.Div("Proyecto", className="control-label"), _dropdown("filtro-proyecto", "Todos")], className="page-filter-field"),
+                html.Div([html.Div("Cliente", className="control-label"), _dropdown("filtro-cliente", "Todos")], className="page-filter-field"),
+                html.Div([html.Div("Destino", className="control-label"), _dropdown("filtro-destino", "Todos")], className="page-filter-field"),
+                html.Button([html.Span("⌁"), " Limpiar filtros"], id="btn-reset-filtros", className="btn-filter-reset", n_clicks=0),
+            ], className="page-filter-grid"),
+        ], className="page-filter-body"),
     ], className="page-filter-panel page-filter-panel-compact" if compact else "page-filter-panel")
