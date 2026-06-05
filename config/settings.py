@@ -124,53 +124,67 @@ ESTANDARES = {
         "dias":                1,
         "jornales":            10,
         "esquejes_total":      30000,
-        "esquejes_persona_dia": 3500,
+        "esquejes_persona_dia": 3000,
     },
     "Siembra": {
-        "personas":            8,
-        "jornales":            15,
-        "dias":                2,
+        "personas":            12,
+        "personas_ahoyado":    2,
+        "personas_siembra":    10,
+        "jornales":            12,
+        "dias":                1,
         "plantas_total":       30000,
         "plantas_persona_dia": 3000,
     },
     "Cosecha": {
-        "personas":            10,
+        "personas":            15,
+        "personas_precosecha":  10,
+        "personas_apoyo":      2,
+        "personas_seleccion":  10,
+        "toneladas_objetivo_total": 20,
         "toneladas_objetivo_dia": 8,
         "kg_objetivo_dia":     8000,
-        "jornales":            46,
+        "jornales":            54,
+        "jornales_precosecha":  10,
+        "jornales_cosecha_apoyo": 44,
         "dias":                2.5,
-        "kg_persona_dia":      800,
+        "kg_persona_dia":      530,
         "pct_primera":         0.60,
         "pct_segunda":         0.25,
         "pct_tercera":         0.15,
-        "pct_comercializable": 0.90,
+        "pct_comercializable": 0.85,
+        "toneladas_comercializables": 17,
+        "tractor_costo_dia":   135000,
     },
     "Lavado Clasificacion": {
-        "personas":       10,
+        "personas":       13,
         "dias":           2,
-        "jornales":       20,
-        "kg_persona_dia": 735,
+        "jornales":       26,
+        "toneladas_comercializables": 17,
+        "kg_persona_dia": 655,
     },
     "Empaque": {
-        "personas":              17,
-        "dias":                  2,
-        "jornales":              34,
-        "pct_empacado_objetivo": 0.95,
+        "personas":              3,
+        "dias":                  1,
+        "jornales":              3,
+        "kg_persona_dia":        2700,
+        "toneladas_estimadas":   8,
     },
     "Cargue Vehiculo": {
-        "personas":  3,
-        "horas":     3,
-        "toneladas": 17,
-        "jornales":  3,
+        "personas":       3,
+        "horas":          3,
+        "toneladas":      8,
+        "jornales":       3,
+        "kg_hora_jornal": 880,
+        "cajas_hora":     44,
     },
 }
 
 DOTACION_ESTANDAR = {
     "Corte Esquejes":       10,
-    "Siembra":              8,
-    "Cosecha":              10,
-    "Lavado Clasificacion": 10,
-    "Empaque":              17,
+    "Siembra":              12,
+    "Cosecha":              15,
+    "Lavado Clasificacion": 13,
+    "Empaque":              3,
     "Cargue Vehiculo":      3,
 }
 
@@ -202,8 +216,8 @@ UMBRAL_CUMPLIMIENTO_ALERTA = 0.80
 UMBRAL_PRIMERA_OK     = 0.55
 UMBRAL_PRIMERA_ALERTA = 0.45
 
-UMBRAL_COMERCIAL_OK     = 0.90
-UMBRAL_COMERCIAL_ALERTA = 0.80
+UMBRAL_COMERCIAL_OK     = 0.85
+UMBRAL_COMERCIAL_ALERTA = 0.75
 
 UMBRAL_PERDIDA_OK     = 0.05
 UMBRAL_PERDIDA_ALERTA = 0.10
