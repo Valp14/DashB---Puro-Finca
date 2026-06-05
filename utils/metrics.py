@@ -17,6 +17,8 @@ AJUSTE APLICADO:
 - promedio_diario_kpi ahora puede calcular promedios sobre todo el periodo
   calendario, incluyendo días intermedios sin registro como 0, salvo columnas
   configuradas para excluir ceros en ZEROS_EXCLUIDOS_EN_KPI.
+- Se corrige normalizacion de Maquinaria para reconocer valores como:
+  Si, Sí, si, sí, True, 1, tractor, con maquinaria, mecanizada.
 """
 
 from __future__ import annotations
@@ -59,6 +61,103 @@ def safe_div(a, b) -> Optional[float]:
         return None
 
 
+def _normalizar_texto(valor) -> str:
+    """
+    Normaliza texto para comparaciones robustas:
+    - Convierte a minusculas.
+    - Elimina espacios extremos.
+    - Quita tildes comunes.
+    """
+    if valor is None or pd.isna(valor):
+        return ""
+
+    texto = str(valor).strip().lower()
+
+    reemplazos = {
+        "á": "a",
+        "é": "e",
+        "í": "i",
+        "ó": "o",
+        "ú": "u",
+        "ü": "u",
+    }
+
+    for original, nuevo in reemplazos.items():
+        texto = texto.replace(original, nuevo)
+
+    return texto
+
+
+def normalizar_maquinaria(valor) -> str:
+    """
+    Normaliza el uso de maquinaria.
+
+    Retorna:
+        "si" cuando el registro indica uso de maquinaria.
+        "no" cuando no hay maquinaria o el valor no es reconocible.
+
+    Esta funcion evita el problema de comparar "Sí" contra "si".
+    """
+    texto = _normalizar_texto(valor)
+
+    positivos = {
+        "si",
+        "s",
+        "yes",
+        "true",
+        "1",
+        "con maquinaria",
+        "maquinaria",
+        "maquina",
+        "uso maquinaria",
+        "usa maquinaria",
+        "utilizo maquinaria",
+        "utiliza maquinaria",
+        "tractor",
+        "con tractor",
+        "mecanizada",
+        "cosecha mecanizada",
+    }
+
+    negativos = {
+        "no",
+        "n",
+        "false",
+        "0",
+        "sin maquinaria",
+        "manual",
+        "no aplica",
+        "na",
+        "n/a",
+        "",
+        "none",
+        "nan",
+    }
+
+    if texto in positivos:
+        return "si"
+
+    if texto in negativos:
+        return "no"
+
+    if texto.startswith("si"):
+        return "si"
+
+    if texto.startswith("no"):
+        return "no"
+
+    if "tractor" in texto:
+        return "si"
+
+    if "maquinaria" in texto and "sin" not in texto and "no" not in texto:
+        return "si"
+
+    if "mecanizada" in texto:
+        return "si"
+
+    return "no"
+
+
 def promedio_kpi(df: pd.DataFrame, col: str, sheet: str) -> Optional[float]:
     if df is None or df.empty or col not in df.columns:
         return None
@@ -91,17 +190,17 @@ def count_registros(df: pd.DataFrame) -> int:
 
 def count_dias_operativos(df: pd.DataFrame) -> int:
     """
-    Cuenta los días calendario del periodo analizado.
+    Cuenta los dias calendario del periodo analizado.
 
     Antes:
-        Contaba únicamente las fechas con registros.
+        Contaba unicamente las fechas con registros.
 
     Ahora:
-        Cuenta todos los días entre la fecha mínima y la fecha máxima del
+        Cuenta todos los dias entre la fecha minima y la fecha maxima del
         dataframe filtrado.
 
     Ejemplo:
-        Si hay registros entre el 1 y el 16 de abril, retorna 16 días,
+        Si hay registros entre el 1 y el 16 de abril, retorna 16 dias,
         aunque solo existan registros en 14 fechas.
     """
     if df is None or df.empty or "Fecha" not in df.columns:
@@ -146,15 +245,15 @@ def promedio_diario_kpi(df: pd.DataFrame, col: str, sheet: str) -> Optional[floa
     Calcula el promedio diario sobre el periodo calendario completo.
 
     Antes:
-        Promediaba solo los días con registros.
+        Promediaba solo los dias con registros.
 
     Ahora:
-        Construye el rango completo entre fecha mínima y fecha máxima,
-        rellena días sin registro con 0 y calcula el promedio sobre
+        Construye el rango completo entre fecha minima y fecha maxima,
+        rellena dias sin registro con 0 y calcula el promedio sobre
         todo ese periodo.
 
     Nota:
-        Si una columna está configurada en ZEROS_EXCLUIDOS_EN_KPI,
+        Si una columna esta configurada en ZEROS_EXCLUIDOS_EN_KPI,
         se mantiene la regla de excluir ceros para evitar distorsiones.
     """
     tmp = _prepare_daily(df, [col])
@@ -404,6 +503,10 @@ def analisis_maquinaria(df: pd.DataFrame) -> dict:
     - kg promedio por jornada
     - kg por hora trabajada
     - kg por hora-persona
+
+    Correccion aplicada:
+    Normaliza Maquinaria para reconocer Si, Sí, True, 1, tractor,
+    con maquinaria, mecanizada, etc.
     """
     vacio = {
         "kg_promedio": None,
@@ -413,28 +516,38 @@ def analisis_maquinaria(df: pd.DataFrame) -> dict:
         "total_kg": 0.0,
     }
 
+    resultado = {
+        "con_maq": dict(vacio),
+        "sin_maq": dict(vacio),
+    }
+
     if df is None or df.empty or "Maquinaria" not in df.columns:
-        return {"con_maq": dict(vacio), "sin_maq": dict(vacio)}
+        return resultado
 
     d = df.copy()
+
+    if "Produccion Kg" not in d.columns:
+        return resultado
 
     for c in ("Produccion Kg", "Horas", "Numero Trabajadores"):
         if c in d.columns:
             d[c] = pd.to_numeric(d[c], errors="coerce")
 
-    if "Produccion Kg" in d.columns:
-        d = d[d["Produccion Kg"].fillna(0) > 0]
+    if "Horas" not in d.columns:
+        d["Horas"] = 0.0
 
-    resultado = {}
+    if "Numero Trabajadores" not in d.columns:
+        d["Numero Trabajadores"] = 0.0
 
-    for valor_maq, key in (("Si", "con_maq"), ("No", "sin_maq")):
-        sub = d[
-            d["Maquinaria"]
-            .astype(str)
-            .str.strip()
-            .str.lower()
-            .str.startswith(valor_maq.lower())
-        ]
+    d = d[d["Produccion Kg"].fillna(0) > 0]
+
+    if d.empty:
+        return resultado
+
+    d["_MaquinariaNorm"] = d["Maquinaria"].apply(normalizar_maquinaria)
+
+    for valor_maq, key in (("si", "con_maq"), ("no", "sin_maq")):
+        sub = d[d["_MaquinariaNorm"] == valor_maq]
 
         if sub.empty:
             resultado[key] = dict(vacio)
@@ -445,7 +558,15 @@ def analisis_maquinaria(df: pd.DataFrame) -> dict:
         else:
             daily = pd.DataFrame()
 
-        if not daily.empty:
+        if not daily.empty and {"Produccion Kg", "Horas", "Numero Trabajadores"}.issubset(daily.columns):
+            daily["Horas"] = pd.to_numeric(daily["Horas"], errors="coerce").fillna(0)
+            daily["Numero Trabajadores"] = pd.to_numeric(
+                daily["Numero Trabajadores"], errors="coerce"
+            ).fillna(0)
+            daily["Produccion Kg"] = pd.to_numeric(
+                daily["Produccion Kg"], errors="coerce"
+            ).fillna(0)
+
             daily["HoraPersona"] = daily["Horas"] * daily["Numero Trabajadores"]
 
             grouped = (
@@ -464,14 +585,16 @@ def analisis_maquinaria(df: pd.DataFrame) -> dict:
             horas_tot = float(grouped["Horas"].sum())
             hp = float(grouped["HoraPersona"].sum())
             jornadas = int(len(grouped))
+
         else:
-            kg_total = float(sub["Produccion Kg"].sum())
-            kg_prom = float(sub["Produccion Kg"].mean())
-            horas_tot = float(sub["Horas"].sum()) if "Horas" in sub.columns else 0
-            hp = (
-                float((sub["Horas"] * sub["Numero Trabajadores"]).sum())
-                if {"Horas", "Numero Trabajadores"}.issubset(sub.columns)
-                else 0
+            kg_total = float(pd.to_numeric(sub["Produccion Kg"], errors="coerce").fillna(0).sum())
+            kg_prom = float(pd.to_numeric(sub["Produccion Kg"], errors="coerce").fillna(0).mean())
+            horas_tot = float(pd.to_numeric(sub["Horas"], errors="coerce").fillna(0).sum())
+            hp = float(
+                (
+                    pd.to_numeric(sub["Horas"], errors="coerce").fillna(0)
+                    * pd.to_numeric(sub["Numero Trabajadores"], errors="coerce").fillna(0)
+                ).sum()
             )
             jornadas = int(len(sub))
 
@@ -891,10 +1014,10 @@ def detectar_inconsistencias(data: dict) -> pd.DataFrame:
 
     # 6. Cosecha: maquinaria = Si con horas maquina = 0
     if not df.empty and {"Maquinaria", "Horas Maquina"}.issubset(df.columns):
-        maq = df["Maquinaria"].astype(str).str.strip().str.lower()
+        maq = df["Maquinaria"].apply(normalizar_maquinaria)
         hm = pd.to_numeric(df["Horas Maquina"], errors="coerce").fillna(0)
 
-        mask = maq.str.startswith("si") & (hm == 0)
+        mask = (maq == "si") & (hm == 0)
 
         for idx in df[mask].index:
             flags.append(
